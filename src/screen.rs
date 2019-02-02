@@ -50,6 +50,7 @@ impl Screen {
             self.front_buffer.canvas.height().into(),
         );
         self.front_buffer.context.draw_image_with_image_bitmap(
+            // TODO Do we need to `close` this?
             &self.back_buffer.canvas.transfer_to_image_bitmap().unwrap(),
             0.0,
             0.0
@@ -79,6 +80,7 @@ trait Draw2d {
 macro_rules! draw2d {
     ($t:ty) => {
         impl Draw2d for $t {
+            // TODO Return a `Result`?
             fn get_context_2d(&self) -> CanvasRenderingContext2d {
                 self.get_context("2d")
                     .unwrap()

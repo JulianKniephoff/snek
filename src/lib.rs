@@ -35,6 +35,13 @@ struct State {
     paused: bool,
 }
 
+// TODO Maybe create some kind of `Simulation` trait
+//   that would also dictate the time step.
+//   Would you want to allow for variable time step in that??!?
+
+// TODO Do we really want to store stuff as floats?
+//   Especially the size?!
+//   Maybe the state should already work in discretized space ...
 impl State {
     fn new(board_width: f64, board_height: f64) -> Self {
         assert!(board_width >= 0.0);
@@ -206,9 +213,12 @@ pub fn main() {
     snek();
 }
 
+// TODO Actually make this work with a provided canvas, too?
 fn snek() {
     console_error_panic_hook::set_once();
 
+    // TODO Do you really want constants here?
+    //   Well, I want to initialize the `FRAME_*` constants with these
     const BOARD_WIDTH: f64 = 20.0;
     const BOARD_HEIGHT: f64 = 15.0;
 
@@ -230,43 +240,78 @@ fn snek() {
     const FRAME_WIDTH: usize = BOARD_WIDTH as usize + 2;
     const FRAME_HEIGHT: usize = BOARD_HEIGHT as usize + 2;
 
+    // To create a screen buffer:
+    /*
+    let mut frame_buffer = Vec::with_capacity(
+        FRAME_WIDTH.checked_mul(FRAME_HEIGHT)
+            .and_then(|size| size.checked_mul(4))
+            .unwrap()
+    );
+    */
+
     let screen = Rc::new(Screen::new(canvas, FRAME_WIDTH, FRAME_HEIGHT));
 
     let mut previous_time = window.performance().unwrap().now();
     let mut lag = 0.0;
 
+    // TODO Wrap this in a cool function
+    // TODO Use `Closure::new`
+    // TODO How to pass proper functions?
     let main_loop = Rc::new(RefCell::new(None));
     let main_loop_cont = Rc::clone(&main_loop);
     {
         let state = Rc::clone(&state);
         let screen = Rc::clone(&screen);
+        // TODO Note `time` is actually the start of the frame ...
         *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
 
+            // TODO More sophisticated structure?
+            //   But then we need to throttle it ...
+
+            // TODO Where exactly do you want to convert to seconds,
+            //   if at all
             const TIME_STEP: f64 = 500.0;
 
+            // TODO Naming
             lag += time - previous_time;
             previous_time = time;
 
             if lag >= TIME_STEP {
+                // TODO Maybe make this produce a temporary state?
+                //   So that you can pass the remaining time in here as well,
+                //   to get to the inbetween frames?
+                // TODO Also pass all of time passed?
+                // TODO Should we even pass the step?
+                //   In a way, `update` should determine
+                //   how small or big it can be.
+                //   This also means that the constant
+                //   should live somewhere else.
                 state.borrow_mut().update();
                 lag = 0.0;
 
                 render(&state.borrow(), &screen);
             }
 
+            // TODO Store the window outside the closure?
             web_sys::window().unwrap().request_animation_frame(
                 (
                     main_loop_cont
                         .borrow()
                         .as_ref()
+                        // TODO Can we somehow get rid of this?
                         .unwrap() as &Closure<_>
                 )
                     .as_ref()
                     .unchecked_ref()
             ).unwrap();
+        // TODO Why not just call `main_loop` here?!
+        //   This is actually harder than it seems
+        //   since we move the function into the closure.
         }) as Box<dyn FnMut(_)>));
     }
     window.request_animation_frame(
+        // TODO Factor this out ...
+        //   Maybe this would get rid of the type annotation as well?
         main_loop.borrow().as_ref().unwrap().as_ref().unchecked_ref()
     ).unwrap();
 
@@ -311,10 +356,13 @@ fn snek() {
         });
     });
 
+    // TODO Throttle!!!
     add_event_listener(&window, "resize", move |_: FocusEvent| {
         let window = web_sys::window().unwrap();
         fit_canvas(
             &window,
+            // TODO Make the canvas shared as well?!
+            //   But at least make it safely identifyable ...
             window.document().unwrap()
                 .get_elements_by_tag_name("canvas")
                 .item(0).unwrap()
@@ -363,12 +411,46 @@ fn render(state: &State, screen: &Screen) {
     context.restore();
 
     screen.flip();
+
+    /* TODO Get rid of this and all the stuff that it needs?
+      Also the feature(s) in `Cargo.toml`
+    frame_buffer.clear();
+    // TODO Use more efficient indexing?
+    for y in 0..frame_height {
+        for x in 0..frame_width {
+            let pixel = (
+                ((x + y) % 2) as f64
+                    * ((state.time_passed / 1000.0).sin() + 1.0) / 2.0
+                    * u8::max_value() as f64
+            ) as u8;
+            frame_buffer.push(pixel);
+            frame_buffer.push(pixel);
+            frame_buffer.push(pixel);
+            frame_buffer.push(u8::max_value());
+        }
+    }
+
+    back_context.put_image_data(
+        &ImageData::new_with_u8_clamped_array_and_sh(
+            Clamped(frame_buffer),
+            frame_width as u32,
+            frame_height as u32,
+        ).unwrap(),
+        // TODO Center this
+        //   Although it might be simpler to just center the canvas?
+        //   Horizontally maybe, but vertically?
+        //   You would probably need CSS for that.
+        0.0,
+        0.0,
+    ).unwrap();
+    */
 }
 
 fn fit_canvas(
     window: &Window,
     canvas: &HtmlCanvasElement,
 ) {
+    // TODO Exclude scrollbars?
     let canvas_width = window.inner_width()
         .unwrap().as_f64().unwrap() as i32;
     let canvas_height = window.inner_height()
