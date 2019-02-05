@@ -64,7 +64,7 @@ pub fn main() {
     style.set_property("overflow", "hidden").unwrap();
 
     let canvas: HtmlCanvasElement = document.create_element("canvas")
-        .unwrap().dyn_into().unwrap();
+        .unwrap().unchecked_into();
     body.append_child(&canvas).unwrap();
 
     const FRAME_WIDTH: usize = BOARD_WIDTH as usize;
