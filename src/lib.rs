@@ -47,6 +47,10 @@ impl State {
 
 #[wasm_bindgen(start)]
 pub fn main() {
+    snek();
+}
+
+fn snek() {
     console_error_panic_hook::set_once();
 
     const BOARD_WIDTH: f64 = 100.0;
