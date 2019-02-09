@@ -33,9 +33,9 @@ impl State {
         }
     }
 
-    fn update(&mut self, dt: f64) {
-        self.position.0 += self.direction.0 * dt / 1000.0;
-        self.position.1 += self.direction.1 * dt / 1000.0;
+    fn update(&mut self) {
+        self.position.0 += self.direction.0;
+        self.position.1 += self.direction.1;
         if self.position.0 < 0.0
             || self.position.0 >= self.board_size.0
             || self.position.1 < 0.0
@@ -93,7 +93,7 @@ fn snek() {
         previous_time = time;
 
         if lag >= TIME_STEP {
-            state.borrow_mut().update(TIME_STEP);
+            state.borrow_mut().update();
             lag = 0.0;
 
             render(&state.borrow(), &screen);
