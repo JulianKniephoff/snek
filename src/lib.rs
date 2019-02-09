@@ -24,6 +24,7 @@ use web_sys::{
 };
 use screen::{Screen};
 
+// TODO Name this `Snek`?!
 struct State {
     board_size: (f64, f64),
     segments: VecDeque<Segment>,
@@ -372,6 +373,7 @@ fn snek() {
     });
 }
 
+// TODO This should be factored differently
 fn render(state: &State, screen: &Screen) {
     if state.paused {
         screen.flip();

@@ -6,17 +6,22 @@ use web_sys::{
     CanvasRenderingContext2d,
 };
 
+// TODO Decomplect double buffering from scaling?
 pub struct Screen {
     front_buffer: ScreenBuffer<HtmlCanvasElement>,
+    // TODO Parametrize this?
     back_buffer: ScreenBuffer<OffscreenCanvas>,
     resolution: (usize, usize),
 }
 
+// TODO What should this know about resizing?
+// TODO Should we protect against/check canvas/context state chaning under us?!
 impl Screen {
     pub fn new(canvas: HtmlCanvasElement, width: usize, height: usize) -> Self {
         let screen = Screen {
             front_buffer: ScreenBuffer::new(canvas),
             back_buffer: ScreenBuffer::new(OffscreenCanvas::new(
+                // TODO Panic here? Or return a result?
                 width.try_into().unwrap(),
                 height.try_into().unwrap()
             ).unwrap()),
@@ -26,15 +31,23 @@ impl Screen {
         screen
     }
 
+    // TODO Do you really want this?
     pub fn context(&self) -> &CanvasRenderingContext2d {
         &self.back_buffer.context
     }
 
+    // TODO Borrow mutably?
+
     pub fn resize(&self) {
+        // TODO I don't like these explicit casts here!
+        // TODO Also protect against this being too large
+        //   (to be accurately represented)
         let scale: f64 = min(
             self.front_buffer.canvas.width() as usize / self.resolution.0,
             self.front_buffer.canvas.height() as usize / self.resolution.1,
         ) as f64;
+        // TODO Make sure this is not 0?
+        // TODO This assumes that the context was actually reset by a resize ...
         self.front_buffer.context.set_image_smoothing_enabled(false);
         self.front_buffer.context.scale(
             scale as f64,
