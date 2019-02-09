@@ -7,7 +7,7 @@ extern crate console_error_panic_hook;
 
 mod screen;
 
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc, collections::VecDeque};
 use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{
     HtmlCanvasElement,
@@ -17,34 +17,75 @@ use web_sys::{
 use screen::{Screen};
 
 struct State {
-    position: (f64, f64),
-    direction: (f64, f64),
     board_size: (f64, f64),
+    segments: VecDeque<Segment>,
+    position: (f64, f64),
+}
+
+impl Orientation {
+    fn to_direction<T: From<i8>>(&self) -> (T, T) {
+        match self {
+            Orientation::North => (T::from(0), T::from(-1)),
+            Orientation::East => (T::from(1), T::from(0)),
+            Orientation::South => (T::from(0), T::from(1)),
+            Orientation::West => (T::from(-1), T::from(0)),
+        }
+    }
 }
 
 impl State {
     fn new(board_width: f64, board_height: f64) -> Self {
         assert!(board_width >= 0.0);
         assert!(board_height >= 0.0);
+        const starting_length: usize = 5;
+        assert!(board_width > starting_length as f64);
+        let mut segments = VecDeque::new();
+        segments.push_back(Segment::new(starting_length, Orientation::East));
         State {
             board_size: (board_width, board_height),
-            position: (0.0, 0.0),
-            direction: (1.0, 0.0),
+            position: ((starting_length - 1) as f64 + 10.0, 0.0 + 10.0),
+            segments: segments,
         }
     }
 
     fn update(&mut self) {
-        self.position.0 += self.direction.0;
-        self.position.1 += self.direction.1;
+        self.segments.front_mut().unwrap().length += 1;
+        self.segments.back_mut().unwrap().length -= 1;
+        if self.segments.back().unwrap().length == 0 {
+            self.segments.pop_back();
+        }
+        let direction = self.segments
+            .front().unwrap()
+            .orientation
+            .to_direction::<f64>();
+        self.position.0 += direction.0;
+        self.position.1 += direction.1;
         if self.position.0 < 0.0
             || self.position.0 >= self.board_size.0
             || self.position.1 < 0.0
             || self.position.1 >= self.board_size.1
         {
-            self.position = (0.0, 0.0);
-            self.direction = (1.0, 0.0);
+            panic!("Game Over!");
         }
     }
+}
+
+struct Segment {
+    orientation: Orientation,
+    length: usize,
+}
+
+impl Segment {
+    fn new(length: usize, orientation: Orientation) -> Self {
+        Segment { length, orientation }
+    }
+}
+
+enum Orientation {
+    North,
+    East,
+    South,
+    West,
 }
 
 #[wasm_bindgen(start)]
@@ -117,21 +158,7 @@ fn snek() {
     let handler = Closure::wrap(
         (box move |event: KeyboardEvent| {
             let mut state = input_state.borrow_mut();
-            match event.key().as_ref() {
-                "ArrowLeft" => if state.direction.1 != 0.0 {
-                    state.direction = (-1.0, 0.0);
-                },
-                "ArrowRight" => if state.direction.1 != 0.0 {
-                    state.direction = (1.0, 0.0);
-                },
-                "ArrowUp" => if state.direction.0 != 0.0 {
-                    state.direction = (0.0, -1.0);
-                }
-                "ArrowDown" => if state.direction.0 != 0.0 {
-                    state.direction = (0.0, 1.0);
-                }
-                _ => (),
-            }
+            state.segments.push_back(Segment::new(5, Orientation::North));
         }) as Box<dyn FnMut(_)>,
     );
     window.add_event_listener_with_callback(
@@ -162,12 +189,27 @@ fn snek() {
 }
 
 fn render(state: &State, screen: &Screen) {
-    screen.context().fill_rect(
-        state.position.0,
-        state.position.1,
-        1.0,
-        1.0,
-    );
+    let context = screen.context();
+    context.save();
+    context.translate(0.5, 0.5);
+    context.set_line_cap("square");
+    let mut position = state.position;
+    for (i, segment) in state.segments.iter().enumerate() {
+        context.begin_path();
+        context.save();
+        context.set_stroke_style(&["green", "red"][i % 2].into());
+        context.move_to(position.0, position.1);
+        let direction = segment.orientation.to_direction::<f64>();
+        position.0 -= direction.0 * (segment.length - 1) as f64;
+        position.1 -= direction.1 * (segment.length - 1) as f64;
+        context.line_to(position.0, position.1);
+        position.0 -= direction.0;
+        position.1 -= direction.1;
+        context.stroke();
+        context.restore();
+    }
+    context.restore();
+
     screen.flip();
 }
 

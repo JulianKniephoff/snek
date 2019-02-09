@@ -23,6 +23,7 @@ impl Screen {
             resolution: (width, height),
         };
         screen.resize();
+        //screen.back_buffer.context.set_image_smoothing_enabled(false);
         screen
     }
 
