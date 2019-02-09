@@ -49,6 +49,8 @@ impl State {
         assert!(board_height >= 0.0);
         const starting_length: usize = 5;
         assert!(board_width > starting_length as f64);
+        // TODO Should this really be a float?
+        // TODO Position this somewhat sensibly
         let starting_position = ((starting_length - 1) as f64, 0.0);
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
@@ -380,13 +382,17 @@ fn render(state: &State, screen: &Screen) {
         return;
     }
 
+    // TODO Does none of this warn?!
     let context = screen.context();
     context.save();
     context.translate(1.0, 1.0);
     context.save();
     context.translate(0.5, 0.5);
     context.set_line_cap("square");
+    // TODO Use `reduce` somehow?
     for (i, segment) in state.segments.iter().enumerate() {
+        // TODO This is in the loop at the moment
+        //   mostly because of the segment coloring
         context.begin_path();
         context.save();
         context.set_stroke_style(&["green", "red"][i % 2].into());
