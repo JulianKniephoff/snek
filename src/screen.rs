@@ -65,6 +65,7 @@ impl Screen {
         self.front_buffer.context.draw_image_with_image_bitmap(
             // TODO Do we need to `close` this?
             &self.back_buffer.canvas.transfer_to_image_bitmap().unwrap(),
+            // TODO Center this?
             0.0,
             0.0
         ).unwrap();
