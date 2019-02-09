@@ -1,18 +1,20 @@
 #![feature(box_syntax)]
+#![feature(try_from)]
 
 extern crate wasm_bindgen;
 extern crate web_sys;
 extern crate console_error_panic_hook;
 
-use std::{cmp::min, cell::RefCell, rc::Rc};
+mod screen;
+
+use std::{cell::RefCell, rc::Rc};
 use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{
-    CanvasRenderingContext2d,
     HtmlCanvasElement,
-    OffscreenCanvas,
     Window,
     KeyboardEvent,
 };
+use screen::{Screen};
 
 struct State {
     position: (f64, f64),
@@ -73,23 +75,16 @@ fn snek() {
 
     const FRAME_WIDTH: usize = BOARD_WIDTH as usize;
     const FRAME_HEIGHT: usize = BOARD_HEIGHT as usize;
+    fit_canvas(&window, &canvas, (FRAME_WIDTH, FRAME_HEIGHT));
 
-    let context = Rc::new(RefCell::new(
-        fit_canvas(&window, &canvas, (FRAME_WIDTH, FRAME_HEIGHT))
-    ));
-
-    let back_buffer = OffscreenCanvas::new(
-        FRAME_WIDTH as u32,
-        FRAME_HEIGHT as u32
-    ).unwrap();
-    let back_context = back_buffer.get_context_2d();
+    let screen = Rc::new(Screen::new(canvas, FRAME_WIDTH, FRAME_HEIGHT));
+    let resize_screen = screen.clone();
 
     let mut previous_time = window.performance().unwrap().now();
     let mut lag = 0.0;
 
     let main_loop = Rc::new(RefCell::new(None));
     let main_loop_cont = main_loop.clone();
-    let resize_context = context.clone();
     *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
 
         const TIME_STEP: f64 = 1000.0;
@@ -101,16 +96,7 @@ fn snek() {
             state.borrow_mut().update(TIME_STEP);
             lag = 0.0;
 
-            render(
-                time,
-                &state.borrow(),
-                FRAME_WIDTH,
-                FRAME_HEIGHT,
-                &canvas,
-                &back_buffer,
-                &context.borrow(),
-                &back_context,
-            );
+            render(&state.borrow(), &screen);
         }
 
         web_sys::window().unwrap().request_animation_frame(
@@ -157,7 +143,7 @@ fn snek() {
     let handler = Closure::wrap(
         (box move || {
             let window = web_sys::window().unwrap();
-            *resize_context.borrow_mut() = fit_canvas(
+            fit_canvas(
                 &window,
                 window.document().unwrap()
                     .get_elements_by_tag_name("canvas")
@@ -165,6 +151,7 @@ fn snek() {
                     .unchecked_ref(),
                 (FRAME_WIDTH, FRAME_HEIGHT),
             );
+            resize_screen.resize();
         }) as Box<dyn FnMut()>,
     );
     window.add_event_listener_with_callback(
@@ -174,41 +161,21 @@ fn snek() {
     handler.forget();
 }
 
-fn render(
-    _time: f64,
-    state: &State,
-    _frame_width: usize,
-    _frame_height: usize,
-    front_buffer: &HtmlCanvasElement,
-    back_buffer: &OffscreenCanvas,
-    front_context: &CanvasRenderingContext2d,
-    back_context: &CanvasRenderingContext2d,
-) {
-    back_context.fill_rect(
+fn render(state: &State, screen: &Screen) {
+    screen.context().fill_rect(
         state.position.0,
         state.position.1,
         1.0,
         1.0,
     );
-
-    front_context.clear_rect(
-        0.0,
-        0.0,
-        front_buffer.width().into(),
-        front_buffer.height().into(),
-    );
-    front_context.draw_image_with_image_bitmap(
-        &back_buffer.transfer_to_image_bitmap().unwrap(),
-        0.0,
-        0.0
-    ).unwrap();
+    screen.flip();
 }
 
 fn fit_canvas(
     window: &Window,
     canvas: &HtmlCanvasElement,
     virtual_size: (usize, usize),
-) -> CanvasRenderingContext2d {
+) {
     let canvas_width = window.inner_width()
         .unwrap().as_f64().unwrap() as i32;
     let canvas_height = window.inner_height()
@@ -219,38 +186,4 @@ fn fit_canvas(
     let canvas_height = canvas_height as usize;
     canvas.set_width(canvas_width as u32);
     canvas.set_height(canvas_height as u32);
-
-    let context = canvas.get_context_2d();
-
-    let scale = min(
-        canvas.width() as usize / virtual_size.0,
-        canvas.height() as usize / virtual_size.1,
-    );
-    assert!(scale > 0);
-    context.set_image_smoothing_enabled(false);
-    context.scale(scale as f64, scale as f64).unwrap();
-
-    context
-}
-
-trait Draw2d {
-    fn get_context_2d(&self) -> CanvasRenderingContext2d;
-}
-
-impl Draw2d for HtmlCanvasElement {
-    fn get_context_2d(&self) -> CanvasRenderingContext2d {
-        self.get_context("2d")
-            .unwrap()
-            .unwrap()
-            .unchecked_into()
-    }
-}
-
-impl Draw2d for OffscreenCanvas {
-    fn get_context_2d(&self) -> CanvasRenderingContext2d {
-        self.get_context("2d")
-            .unwrap()
-            .unwrap()
-            .unchecked_into()
-    }
 }
