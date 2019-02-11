@@ -158,7 +158,23 @@ fn snek() {
     let handler = Closure::wrap(
         (box move |event: KeyboardEvent| {
             let mut state = input_state.borrow_mut();
-            state.segments.push_back(Segment::new(5, Orientation::North));
+            let key = event.key();
+            let new_orientation = match state.segments
+                .front().unwrap()
+                .orientation
+            {
+                Orientation::North | Orientation::South => match key.as_ref() {
+                    "ArrowLeft" => Orientation::West,
+                    "ArrowRight" => Orientation::East,
+                    _ => return,
+                },
+                Orientation::East | Orientation::West => match key.as_ref() {
+                    "ArrowUp" => Orientation::North,
+                    "ArrowDown" => Orientation::South,
+                    _ => return,
+                },
+            };
+            state.segments.push_front(Segment::new(0, new_orientation));
         }) as Box<dyn FnMut(_)>,
     );
     window.add_event_listener_with_callback(
