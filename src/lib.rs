@@ -335,6 +335,25 @@ fn snek() {
             return;
         }
 
+        // TODO Make this nicer ...
+        //   Maybe factor out some `is_orthogonal`,
+        //   then just map a key to a new orientation,
+        //   Profit??!?
+        // TODO Why can't you do something like this?
+        /*let new_orientation = match (
+            event.key().as_ref(),
+            state.borrow().segments.front().unwrap().orientation,
+        ) {
+            ("ArrowLeft", Orientation::North | Orientation::South) =>
+                Orientation::West,
+            ("ArrowRight", Orientation::North | Orientation::South) =>
+                Orientation::East,
+            ("ArrowUp", Orientation::East | Orientation::West) =>
+                Orientation::North,
+            ("ArrowDown", Orientation::East | Orientation::West) =>
+                Orientation::South,
+            _ => return,
+        };*/
         // TODO This is now less readable,
         //   without `Orientation`
         let direction = state.segments
@@ -384,6 +403,7 @@ fn render(state: &State, screen: &Screen) {
 
     // TODO Does none of this warn?!
     let context = screen.context();
+    // TODO Set this somewhere else?!
     context.save();
     context.translate(1.0, 1.0);
     context.save();
@@ -391,10 +411,12 @@ fn render(state: &State, screen: &Screen) {
     context.set_line_cap("square");
     // TODO Use `reduce` somehow?
     for (i, segment) in state.segments.iter().enumerate() {
-        // TODO This is in the loop at the moment
-        //   mostly because of the segment coloring
         context.begin_path();
         context.save();
+        // TODO Use `zip` or something
+        // TODO This is in the loop at the moment
+        //   mostly because of the segment coloring
+        //   Simplify this path handling once you get rid of it
         context.set_stroke_style(&["green", "red"][i % 2].into());
         context.move_to(segment.start.0, segment.start.1);
         context.line_to(
