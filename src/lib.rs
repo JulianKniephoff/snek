@@ -37,7 +37,7 @@ impl State {
     fn new(board_width: f64, board_height: f64) -> Self {
         assert!(board_width >= 0.0);
         assert!(board_height >= 0.0);
-        const starting_length: usize = 5;
+        const starting_length: usize = 50;
         assert!(board_width > starting_length as f64);
         let mut segments = VecDeque::new();
         segments.push_back(Segment::new(starting_length, Orientation::East));
@@ -128,7 +128,7 @@ fn snek() {
     let main_loop_cont = main_loop.clone();
     *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
 
-        const TIME_STEP: f64 = 1000.0;
+        const TIME_STEP: f64 = 100.0;
 
         lag += time - previous_time;
         previous_time = time;
