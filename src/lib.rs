@@ -113,10 +113,10 @@ fn snek() {
     let canvas: HtmlCanvasElement = document.create_element("canvas")
         .unwrap().unchecked_into();
     body.append_child(&canvas).unwrap();
+    fit_canvas(&window, &canvas);
 
     const FRAME_WIDTH: usize = BOARD_WIDTH as usize;
     const FRAME_HEIGHT: usize = BOARD_HEIGHT as usize;
-    fit_canvas(&window, &canvas, (FRAME_WIDTH, FRAME_HEIGHT));
 
     let screen = Rc::new(Screen::new(canvas, FRAME_WIDTH, FRAME_HEIGHT));
     let resize_screen = screen.clone();
@@ -192,7 +192,6 @@ fn snek() {
                     .get_elements_by_tag_name("canvas")
                     .item(0).unwrap()
                     .unchecked_ref(),
-                (FRAME_WIDTH, FRAME_HEIGHT),
             );
             resize_screen.resize();
         }) as Box<dyn FnMut()>,
@@ -232,7 +231,6 @@ fn render(state: &State, screen: &Screen) {
 fn fit_canvas(
     window: &Window,
     canvas: &HtmlCanvasElement,
-    virtual_size: (usize, usize),
 ) {
     let canvas_width = window.inner_width()
         .unwrap().as_f64().unwrap() as i32;
