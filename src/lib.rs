@@ -100,7 +100,6 @@ fn snek() {
     const BOARD_HEIGHT: f64 = 100.0;
 
     let state = Rc::new(RefCell::new(State::new(BOARD_WIDTH, BOARD_HEIGHT)));
-    let input_state = state.clone();
 
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
@@ -119,45 +118,48 @@ fn snek() {
     const FRAME_HEIGHT: usize = BOARD_HEIGHT as usize;
 
     let screen = Rc::new(Screen::new(canvas, FRAME_WIDTH, FRAME_HEIGHT));
-    let resize_screen = screen.clone();
 
     let mut previous_time = window.performance().unwrap().now();
     let mut lag = 0.0;
 
     let main_loop = Rc::new(RefCell::new(None));
     let main_loop_cont = main_loop.clone();
-    *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
+    {
+        let state = state.clone();
+        let screen = screen.clone();
+        *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
 
-        const TIME_STEP: f64 = 100.0;
+            const TIME_STEP: f64 = 100.0;
 
-        lag += time - previous_time;
-        previous_time = time;
+            lag += time - previous_time;
+            previous_time = time;
 
-        if lag >= TIME_STEP {
-            state.borrow_mut().update();
-            lag = 0.0;
+            if lag >= TIME_STEP {
+                state.borrow_mut().update();
+                lag = 0.0;
 
-            render(&state.borrow(), &screen);
-        }
+                render(&state.borrow(), &screen);
+            }
 
-        web_sys::window().unwrap().request_animation_frame(
-            (
-                main_loop_cont
-                    .borrow()
+            web_sys::window().unwrap().request_animation_frame(
+                (
+                    main_loop_cont
+                        .borrow()
+                        .as_ref()
+                        .unwrap() as &Closure<_>
+                )
                     .as_ref()
-                    .unwrap() as &Closure<_>
-            )
-                .as_ref()
-                .unchecked_ref()
-        ).unwrap();
-    }) as Box<dyn FnMut(_)>));
+                    .unchecked_ref()
+            ).unwrap();
+        }) as Box<dyn FnMut(_)>));
+    }
     window.request_animation_frame(
         main_loop.borrow().as_ref().unwrap().as_ref().unchecked_ref()
     ).unwrap();
 
     let handler = Closure::wrap(
         (box move |event: KeyboardEvent| {
-            let mut state = input_state.borrow_mut();
+            let mut state = state.borrow_mut();
             let key = event.key();
             let new_orientation = match state.segments
                 .front().unwrap()
@@ -193,7 +195,7 @@ fn snek() {
                     .item(0).unwrap()
                     .unchecked_ref(),
             );
-            resize_screen.resize();
+            screen.resize();
         }) as Box<dyn FnMut()>,
     );
     window.add_event_listener_with_callback(
