@@ -55,14 +55,17 @@
 /******/ 		"./pkg/snek_bg.wasm": function() {
 /******/ 			return {
 /******/ 				"./snek": {
-/******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_object_drop_ref"](p0i32);
-/******/ 					},
 /******/ 					"__wbindgen_cb_forget": function(p0i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_cb_forget"](p0i32);
 /******/ 					},
 /******/ 					"__wbindgen_cb_drop": function(p0i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_cb_drop"](p0i32);
+/******/ 					},
+/******/ 					"__wbindgen_string_new": function(p0i32,p1i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_string_new"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_object_drop_ref"](p0i32);
 /******/ 					},
 /******/ 					"__wbg_error_cc95a3d302735ca3": function(p0i32,p1i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_error_cc95a3d302735ca3"](p0i32,p1i32);
@@ -73,17 +76,41 @@
 /******/ 					"__widl_f_draw_image_with_image_bitmap_CanvasRenderingContext2D": function(p0i32,p1i32,p2f64,p3f64,p4i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_draw_image_with_image_bitmap_CanvasRenderingContext2D"](p0i32,p1i32,p2f64,p3f64,p4i32);
 /******/ 					},
+/******/ 					"__widl_f_begin_path_CanvasRenderingContext2D": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_begin_path_CanvasRenderingContext2D"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_stroke_CanvasRenderingContext2D": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_stroke_CanvasRenderingContext2D"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_set_stroke_style_CanvasRenderingContext2D": function(p0i32,p1i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_set_stroke_style_CanvasRenderingContext2D"](p0i32,p1i32);
+/******/ 					},
 /******/ 					"__widl_f_set_image_smoothing_enabled_CanvasRenderingContext2D": function(p0i32,p1i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_set_image_smoothing_enabled_CanvasRenderingContext2D"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__widl_f_set_line_cap_CanvasRenderingContext2D": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_set_line_cap_CanvasRenderingContext2D"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__widl_f_line_to_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_line_to_CanvasRenderingContext2D"](p0i32,p1f64,p2f64);
+/******/ 					},
+/******/ 					"__widl_f_move_to_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_move_to_CanvasRenderingContext2D"](p0i32,p1f64,p2f64);
 /******/ 					},
 /******/ 					"__widl_f_clear_rect_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64,p3f64,p4f64) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_clear_rect_CanvasRenderingContext2D"](p0i32,p1f64,p2f64,p3f64,p4f64);
 /******/ 					},
-/******/ 					"__widl_f_fill_rect_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64,p3f64,p4f64) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_fill_rect_CanvasRenderingContext2D"](p0i32,p1f64,p2f64,p3f64,p4f64);
+/******/ 					"__widl_f_restore_CanvasRenderingContext2D": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_restore_CanvasRenderingContext2D"](p0i32);
+/******/ 					},
+/******/ 					"__widl_f_save_CanvasRenderingContext2D": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_save_CanvasRenderingContext2D"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_scale_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64,p3i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_scale_CanvasRenderingContext2D"](p0i32,p1f64,p2f64,p3i32);
+/******/ 					},
+/******/ 					"__widl_f_translate_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64,p3i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_translate_CanvasRenderingContext2D"](p0i32,p1f64,p2f64,p3i32);
 /******/ 					},
 /******/ 					"__widl_f_create_element_Document": function(p0i32,p1i32,p2i32,p3i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_create_element_Document"](p0i32,p1i32,p2i32,p3i32);
@@ -96,9 +123,6 @@
 /******/ 					},
 /******/ 					"__widl_f_add_event_listener_with_callback_EventTarget": function(p0i32,p1i32,p2i32,p3i32,p4i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_add_event_listener_with_callback_EventTarget"](p0i32,p1i32,p2i32,p3i32,p4i32);
-/******/ 					},
-/******/ 					"__widl_instanceof_HTMLCanvasElement": function(p0i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_instanceof_HTMLCanvasElement"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_get_context_HTMLCanvasElement": function(p0i32,p1i32,p2i32,p3i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_get_context_HTMLCanvasElement"](p0i32,p1i32,p2i32,p3i32);
@@ -175,14 +199,14 @@
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_throw"](p0i32,p1i32);
 /******/ 					},
-/******/ 					"__wbindgen_closure_wrapper60": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper60"](p0i32,p1i32,p2i32);
+/******/ 					"__wbindgen_closure_wrapper169": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper169"](p0i32,p1i32,p2i32);
 /******/ 					},
-/******/ 					"__wbindgen_closure_wrapper62": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper62"](p0i32,p1i32,p2i32);
+/******/ 					"__wbindgen_closure_wrapper171": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper171"](p0i32,p1i32,p2i32);
 /******/ 					},
-/******/ 					"__wbindgen_closure_wrapper64": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper64"](p0i32,p1i32,p2i32);
+/******/ 					"__wbindgen_closure_wrapper173": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper173"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__wbindgen_defer_start": function() {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_defer_start"]();
@@ -285,7 +309,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"./pkg/snek_bg.wasm":"758be0ecdd1c84f08353"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"./pkg/snek_bg.wasm":"f37ea03b96e93f7fdb63"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
