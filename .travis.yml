@@ -1,0 +1,22 @@
+language: generic
+
+install:
+  - nvm install node
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
+  - source $HOME/.cargo/env
+  - npm install
+
+script: npx webpack
+
+deploy:
+  provider: pages
+  local-dir: dist
+  on:
+    branch: master
+  skip-cleanup: yes
+  keep-history: yes
+  github-token: $GITHUB_TOKEN
+
+cache:
+  - npm
+  - cargo
