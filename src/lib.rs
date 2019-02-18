@@ -51,6 +51,8 @@ impl State {
         assert!(board_width > starting_length as f64);
         // TODO Should this really be a float?
         // TODO Position this somewhat sensibly
+        // TODO Infer this position from the segment somehow
+        //   Maybe give it a function to compute its head position?
         let starting_position = ((starting_length - 1) as f64, 0.0);
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
@@ -228,6 +230,7 @@ fn snek() {
 
     // TODO Do you really want constants here?
     //   Well, I want to initialize the `FRAME_*` constants with these
+    // TODO Encode the invariant that this is screen size - 2 somehow
     const BOARD_WIDTH: f64 = 20.0;
     const BOARD_HEIGHT: f64 = 15.0;
 
@@ -285,6 +288,9 @@ fn snek() {
             lag += time - previous_time;
             previous_time = time;
 
+            // TODO Fix the start of the simulation
+            //   You call `update` before you render the first time.
+            //   Also the first frame is going to be shorter?
             if lag >= TIME_STEP {
                 // TODO Maybe make this produce a temporary state?
                 //   So that you can pass the remaining time in here as well,
@@ -410,6 +416,9 @@ fn render(state: &State, screen: &Screen) {
 
     // TODO Does none of this warn?!
     let context = screen.context();
+    // TODO Woff, this "transformer stack" seems ugly
+    //   Also it might need comments
+    //   Or self documenting functions ...
     // TODO Set this somewhere else?!
     context.save();
     context.translate(1.0, 1.0);
@@ -439,6 +448,10 @@ fn render(state: &State, screen: &Screen) {
     context.restore();
 
     context.save();
+    // TODO Just add to the coordinates manually??!?
+    // TODO Can we simplify the transformation stuff?
+    //   It sucks that different parts of this method
+    //   need different, overlapping transformations ...
     context.translate(0.5, 0.5);
     context.stroke_rect(
         0.0, 0.0,
