@@ -100,6 +100,9 @@
 /******/ 					"__widl_f_clear_rect_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64,p3f64,p4f64) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_clear_rect_CanvasRenderingContext2D"](p0i32,p1f64,p2f64,p3f64,p4f64);
 /******/ 					},
+/******/ 					"__widl_f_fill_rect_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64,p3f64,p4f64) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_fill_rect_CanvasRenderingContext2D"](p0i32,p1f64,p2f64,p3f64,p4f64);
+/******/ 					},
 /******/ 					"__widl_f_restore_CanvasRenderingContext2D": function(p0i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__widl_f_restore_CanvasRenderingContext2D"](p0i32);
 /******/ 					},
@@ -187,6 +190,36 @@
 /******/ 					"__wbg_call_7ac13208e630ddeb": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_call_7ac13208e630ddeb"](p0i32,p1i32,p2i32);
 /******/ 					},
+/******/ 					"__wbg_new_886f15c1b20b061b": function(p0i32,p1i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_new_886f15c1b20b061b"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_call_a2b503e0ee1234e4": function(p0i32,p1i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_call_a2b503e0ee1234e4"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_self_ddd2d80076091e5f": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_self_ddd2d80076091e5f"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_crypto_4b7669ff1793d881": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_crypto_4b7669ff1793d881"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_getRandomValues_6de85818bd2ad699": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_getRandomValues_6de85818bd2ad699"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_getRandomValues_95cef5eed1acafda": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_getRandomValues_95cef5eed1acafda"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_require_86edd37cfda5f13d": function(p0i32,p1i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_require_86edd37cfda5f13d"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_randomFillSync_571502126f344d60": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbg_randomFillSync_571502126f344d60"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbindgen_is_undefined": function(p0i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_is_undefined"](p0i32);
+/******/ 					},
+/******/ 					"__wbindgen_jsval_eq": function(p0i32,p1i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_jsval_eq"](p0i32,p1i32);
+/******/ 					},
 /******/ 					"__wbindgen_number_get": function(p0i32,p1i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_number_get"](p0i32,p1i32);
 /******/ 					},
@@ -199,14 +232,14 @@
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_throw"](p0i32,p1i32);
 /******/ 					},
-/******/ 					"__wbindgen_closure_wrapper169": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper169"](p0i32,p1i32,p2i32);
+/******/ 					"__wbindgen_closure_wrapper243": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper243"](p0i32,p1i32,p2i32);
 /******/ 					},
-/******/ 					"__wbindgen_closure_wrapper171": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper171"](p0i32,p1i32,p2i32);
+/******/ 					"__wbindgen_closure_wrapper245": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper245"](p0i32,p1i32,p2i32);
 /******/ 					},
-/******/ 					"__wbindgen_closure_wrapper173": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper173"](p0i32,p1i32,p2i32);
+/******/ 					"__wbindgen_closure_wrapper247": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_closure_wrapper247"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__wbindgen_defer_start": function() {
 /******/ 						return installedModules["./pkg/snek.js"].exports["__wbindgen_defer_start"]();
@@ -309,7 +342,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"./pkg/snek_bg.wasm":"fdcfb6fa6d3e66a10c15"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"./pkg/snek_bg.wasm":"20a1811eac182fd37390"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
