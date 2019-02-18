@@ -318,6 +318,7 @@ fn snek() {
         main_loop.borrow().as_ref().unwrap().as_ref().unchecked_ref()
     ).unwrap();
 
+    // TODO How can we remove these listeners again?
     add_event_listener(&window, "keyup", move |event: KeyboardEvent| {
         let mut state = state.borrow_mut();
         let key = event.key();
