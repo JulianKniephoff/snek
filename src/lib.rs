@@ -47,16 +47,27 @@ impl State {
 
     fn update(&mut self) {
         self.segments.front_mut().unwrap().length += 1;
-        self.segments.back_mut().unwrap().length -= 1;
-        if self.segments.back().unwrap().length == 0 {
-            self.segments.pop_back();
-        }
+
         let direction = self.segments
             .front().unwrap()
             .orientation
             .to_direction::<f64>();
         self.position.0 += direction.0;
         self.position.1 += direction.1;
+
+        if self.position == self.food {
+            let mut rng = thread_rng();
+            self.food = (
+                rng.gen_range(0.0, self.board_size.0).floor(),
+                rng.gen_range(0.0, self.board_size.1).floor(),
+            )
+        } else {
+            self.segments.back_mut().unwrap().length -= 1;
+            if self.segments.back().unwrap().length == 0 {
+                self.segments.pop_back();
+            }
+        }
+
         if self.position.0 < 0.0
             || self.position.0 >= self.board_size.0
             || self.position.1 < 0.0
