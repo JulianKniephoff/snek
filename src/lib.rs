@@ -22,17 +22,6 @@ struct State {
     position: (f64, f64),
 }
 
-impl Orientation {
-    fn to_direction<T: From<i8>>(&self) -> (T, T) {
-        match self {
-            Orientation::North => (T::from(0), T::from(-1)),
-            Orientation::East => (T::from(1), T::from(0)),
-            Orientation::South => (T::from(0), T::from(1)),
-            Orientation::West => (T::from(-1), T::from(0)),
-        }
-    }
-}
-
 impl State {
     fn new(board_width: f64, board_height: f64) -> Self {
         assert!(board_width >= 0.0);
@@ -86,6 +75,17 @@ enum Orientation {
     East,
     South,
     West,
+}
+
+impl Orientation {
+    fn to_direction<T: From<i8>>(&self) -> (T, T) {
+        match self {
+            Orientation::North => (T::from(0), T::from(-1)),
+            Orientation::East => (T::from(1), T::from(0)),
+            Orientation::South => (T::from(0), T::from(1)),
+            Orientation::West => (T::from(-1), T::from(0)),
+        }
+    }
 }
 
 #[wasm_bindgen(start)]
