@@ -165,6 +165,12 @@ impl State {
                 .filter(|(_, &occupied)| !occupied)
                 .map(|(index, _)| index)
         );
+        // TODO Is `thread_rng` the right way?
+        //   How else should we get this?
+        // TODO If you do this differently,
+        //   remember to get rid of the `wasm-bindgen` feature
+        //   in `Cargo.toml`
+        // TODO Seed this?
         State::to_position(
             *free_cells.choose(&mut thread_rng()).unwrap(),
             (board_size.0 as f64, board_size.1 as f64),
