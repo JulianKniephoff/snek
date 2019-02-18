@@ -96,8 +96,8 @@ pub fn main() {
 fn snek() {
     console_error_panic_hook::set_once();
 
-    const BOARD_WIDTH: f64 = 100.0;
-    const BOARD_HEIGHT: f64 = 100.0;
+    const BOARD_WIDTH: f64 = 50.0;
+    const BOARD_HEIGHT: f64 = 50.0;
 
     let state = Rc::new(RefCell::new(State::new(BOARD_WIDTH, BOARD_HEIGHT)));
 
