@@ -36,7 +36,7 @@ impl State {
         let mut rng = thread_rng();
         State {
             board_size: (board_width, board_height),
-            position: ((starting_length - 1) as f64 + 10.0, 0.0 + 10.0),
+            position: ((starting_length - 1) as f64, 0.0),
             segments: segments,
             food: (
                 rng.gen_range(0.0, board_width).floor(),
@@ -115,8 +115,8 @@ pub fn main() {
 fn snek() {
     console_error_panic_hook::set_once();
 
-    const BOARD_WIDTH: f64 = 50.0;
-    const BOARD_HEIGHT: f64 = 50.0;
+    const BOARD_WIDTH: f64 = 48.0;
+    const BOARD_HEIGHT: f64 = 48.0;
 
     let state = Rc::new(RefCell::new(State::new(BOARD_WIDTH, BOARD_HEIGHT)));
 
@@ -133,8 +133,8 @@ fn snek() {
     body.append_child(&canvas).unwrap();
     fit_canvas(&window, &canvas);
 
-    const FRAME_WIDTH: usize = BOARD_WIDTH as usize;
-    const FRAME_HEIGHT: usize = BOARD_HEIGHT as usize;
+    const FRAME_WIDTH: usize = BOARD_WIDTH as usize + 2;
+    const FRAME_HEIGHT: usize = BOARD_HEIGHT as usize + 2;
 
     let screen = Rc::new(Screen::new(canvas, FRAME_WIDTH, FRAME_HEIGHT));
 
@@ -227,6 +227,8 @@ fn snek() {
 fn render(state: &State, screen: &Screen) {
     let context = screen.context();
     context.save();
+    context.translate(1.0, 1.0);
+    context.save();
     context.translate(0.5, 0.5);
     context.set_line_cap("square");
     let mut position = state.position;
@@ -247,6 +249,16 @@ fn render(state: &State, screen: &Screen) {
     context.restore();
 
     context.fill_rect(state.food.0, state.food.1, 1.0, 1.0);
+    context.restore();
+
+    context.save();
+    context.translate(0.5, 0.5);
+    context.stroke_rect(
+        0.0, 0.0,
+        state.board_size.0 + 1.0,
+        state.board_size.1 + 1.0,
+    );
+    context.restore();
 
     screen.flip();
 }
