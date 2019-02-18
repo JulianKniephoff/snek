@@ -1,6 +1,7 @@
 #![feature(box_syntax)]
 #![feature(try_from)]
 
+extern crate rand;
 extern crate wasm_bindgen;
 extern crate web_sys;
 extern crate console_error_panic_hook;
@@ -8,6 +9,7 @@ extern crate console_error_panic_hook;
 mod screen;
 
 use std::{cell::RefCell, rc::Rc, collections::VecDeque};
+use rand::{Rng, thread_rng};
 use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{
     HtmlCanvasElement,
@@ -20,6 +22,7 @@ struct State {
     board_size: (f64, f64),
     segments: VecDeque<Segment>,
     position: (f64, f64),
+    food: (f64, f64),
 }
 
 impl State {
@@ -30,10 +33,15 @@ impl State {
         assert!(board_width > starting_length as f64);
         let mut segments = VecDeque::new();
         segments.push_back(Segment::new(starting_length, Orientation::East));
+        let mut rng = thread_rng();
         State {
             board_size: (board_width, board_height),
             position: ((starting_length - 1) as f64 + 10.0, 0.0 + 10.0),
             segments: segments,
+            food: (
+                rng.gen_range(0.0, board_width).floor(),
+                rng.gen_range(0.0, board_height).floor(),
+            ),
         }
     }
 
@@ -226,6 +234,8 @@ fn render(state: &State, screen: &Screen) {
         context.restore();
     }
     context.restore();
+
+    context.fill_rect(state.food.0, state.food.1, 1.0, 1.0);
 
     screen.flip();
 }
