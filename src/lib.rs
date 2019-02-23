@@ -9,7 +9,7 @@ extern crate console_error_panic_hook;
 mod screen;
 
 use std::{cell::RefCell, rc::Rc, collections::VecDeque};
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, seq::SliceRandom};
 use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{
     HtmlCanvasElement,
@@ -21,8 +21,9 @@ use screen::{Screen};
 struct State {
     board_size: (f64, f64),
     segments: VecDeque<Segment>,
-    position: (f64, f64),
     food: (f64, f64),
+    occupied: Vec<bool>,
+    free_cells: Vec<(f64, f64)>,
 }
 
 impl State {
@@ -32,60 +33,118 @@ impl State {
         const starting_length: usize = 5;
         assert!(board_width > starting_length as f64);
         let mut segments = VecDeque::new();
-        segments.push_back(Segment::new(starting_length, Orientation::East));
-        let mut rng = thread_rng();
+        let starting_position = ((starting_length - 1) as f64, 0.0);
+        segments.push_back(Segment::new(
+            starting_position,
+            starting_length,
+            Orientation::East
+        ));
+        let cell_count = board_width as usize * board_height as usize;
+        let mut occupied = vec![false; cell_count];
+        for x in 0..starting_length {
+            occupied[x] = true;
+        }
+        let mut free_cells = Vec::with_capacity(cell_count);
         State {
             board_size: (board_width, board_height),
-            position: ((starting_length - 1) as f64, 0.0),
-            segments: segments,
-            food: (
-                rng.gen_range(0.0, board_width).floor(),
-                rng.gen_range(0.0, board_height).floor(),
+            food: State::spawn_food(
+                (board_width as usize, board_height as usize),
+                &occupied,
+                &mut free_cells,
             ),
+            segments,
+            occupied,
+            free_cells,
         }
     }
 
     fn update(&mut self) {
-        self.segments.front_mut().unwrap().length += 1;
+        let head_start = {
+            let head = self.segments.front_mut().unwrap();
+            let direction = head.orientation.to_direction::<f64>();
+            head.start.0 += direction.0;
+            head.start.1 += direction.1;
+            head.start
+        };
 
-        let direction = self.segments
-            .front().unwrap()
-            .orientation
-            .to_direction::<f64>();
-        self.position.0 += direction.0;
-        self.position.1 += direction.1;
-
-        if self.position == self.food {
-            let mut rng = thread_rng();
-            self.food = (
-                rng.gen_range(0.0, self.board_size.0).floor(),
-                rng.gen_range(0.0, self.board_size.1).floor(),
-            )
-        } else {
-            self.segments.back_mut().unwrap().length -= 1;
-            if self.segments.back().unwrap().length == 0 {
-                self.segments.pop_back();
-            }
-        }
-
-        if self.position.0 < 0.0
-            || self.position.0 >= self.board_size.0
-            || self.position.1 < 0.0
-            || self.position.1 >= self.board_size.1
+        if head_start.0 < 0.0
+            || head_start.0 >= self.board_size.0
+            || head_start.1 < 0.0
+            || head_start.1 >= self.board_size.1
         {
             panic!("Game Over!");
         }
+
+        self.occupy(head_start, true);
+
+        if head_start == self.food {
+            self.food = State::spawn_food(
+                (self.board_size.0 as usize, self.board_size.1 as usize),
+                &self.occupied,
+                &mut self.free_cells,
+            )
+        } else {
+            let tail_end = {
+                let tail = self.segments.back_mut().unwrap();
+                let tail_end = tail.end;
+                let direction = tail.orientation.to_direction::<f64>();
+                tail.end.0 += direction.0;
+                tail.end.1 += direction.1;
+                if tail.start == tail.end {
+                    self.segments.pop_back();
+                }
+                tail_end
+            };
+            self.occupy(tail_end, false);
+        }
+    }
+
+    fn spawn_food<'a>(
+        board_size: (usize, usize),
+        occupied: impl IntoIterator<Item = &'a bool>,
+        free_cells: &mut Vec<(f64, f64)>,
+    ) -> (f64, f64) {
+        free_cells.clear();
+        free_cells.extend(
+            occupied.into_iter()
+                .enumerate()
+                .filter(|(_, &occupied)| !occupied)
+                .map(|(index, _)| State::to_position(index, (
+                    board_size.0 as f64,
+                    board_size.1 as f64,
+                )))
+        );
+        *free_cells.choose(&mut thread_rng()).unwrap()
+    }
+
+    fn to_position(index: usize, size: (f64, f64)) -> (f64, f64) {
+        ((index % size.0 as usize) as f64, (index / size.0 as usize) as f64)
+    }
+
+    fn occupy(&mut self, position: (f64, f64), occupied: bool) {
+        self.occupied[
+            (position.1 * self.board_size.0 + position.0) as usize
+        ] = occupied;
     }
 }
 
 struct Segment {
     orientation: Orientation,
-    length: usize,
+    start: (f64, f64),
+    end: (f64, f64),
 }
 
 impl Segment {
-    fn new(length: usize, orientation: Orientation) -> Self {
-        Segment { length, orientation }
+    fn new(start: (f64, f64), length: usize, orientation: Orientation) -> Self {
+        let direction = orientation.to_direction::<f64>();
+        Segment {
+            orientation,
+            start,
+            end: (
+                start.0 - direction.0 * length as f64,
+                start.1 - direction.1 * length as f64,
+            ),
+        }
     }
 }
 
@@ -115,8 +174,8 @@ pub fn main() {
 fn snek() {
     console_error_panic_hook::set_once();
 
-    const BOARD_WIDTH: f64 = 48.0;
-    const BOARD_HEIGHT: f64 = 48.0;
+    const BOARD_WIDTH: f64 = 20.0;
+    const BOARD_HEIGHT: f64 = 15.0;
 
     let state = Rc::new(RefCell::new(State::new(BOARD_WIDTH, BOARD_HEIGHT)));
 
@@ -195,7 +254,12 @@ fn snek() {
                     _ => return,
                 },
             };
-            state.segments.push_front(Segment::new(0, new_orientation));
+            let current_position = state.segments.front().unwrap().start;
+            state.segments.push_front(Segment::new(
+                current_position,
+                0,
+                new_orientation,
+            ));
         }) as Box<dyn FnMut(_)>,
     );
     window.add_event_listener_with_callback(
@@ -231,18 +295,12 @@ fn render(state: &State, screen: &Screen) {
     context.save();
     context.translate(0.5, 0.5);
     context.set_line_cap("square");
-    let mut position = state.position;
     for (i, segment) in state.segments.iter().enumerate() {
         context.begin_path();
         context.save();
         context.set_stroke_style(&["green", "red"][i % 2].into());
-        context.move_to(position.0, position.1);
-        let direction = segment.orientation.to_direction::<f64>();
-        position.0 -= direction.0 * (segment.length - 1) as f64;
-        position.1 -= direction.1 * (segment.length - 1) as f64;
-        context.line_to(position.0, position.1);
-        position.0 -= direction.0;
-        position.1 -= direction.1;
+        context.move_to(segment.start.0, segment.start.1);
+        context.line_to(segment.end.0, segment.end.1);
         context.stroke();
         context.restore();
     }
