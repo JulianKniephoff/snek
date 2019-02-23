@@ -29,7 +29,11 @@ struct State {
     board_size: (f64, f64),
     segments: VecDeque<Segment>,
     food: (f64, f64),
+    // TODO These should not be a `Vec`
+    // TODO Especially this first one should just be a slice!
     occupied: Vec<bool>,
+    // TODO We save this mostly to avoid reallocating it every food spawn ...
+    //   The compiler shoould optimize this but I don't see how it could.
     free_cells: Vec<usize>,
     had_food: bool,
     new_direction: Option<(f64, f64)>,
@@ -56,6 +60,8 @@ impl State {
         let starting_position = ((starting_length - 1) as f64, 0.0);
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
+        // TODO Make this more dynamic/dependent on the starting configuration ...
+        //   Because this **will** break!
         for x in 0..starting_length {
             occupied[x] = true;
         }
@@ -63,8 +69,10 @@ impl State {
         State {
             board_size: (board_width, board_height),
             food: State::spawn_food(
+                // TODO You construct this tuple pretty often ...
                 (board_width as usize, board_height as usize),
                 &occupied,
+                // TODO That we have to pass the buffer here is utter madness
                 &mut free_cells,
             ),
             // TODO Is there no `vec!`-like macro for this?
@@ -90,6 +98,9 @@ impl State {
             return;
         }
 
+        // TODO That all this is wrapped in a black to get the current head,
+        //   just to appease the borrow checker,
+        //   is a kind of madness
         let head_start = if let Some(new_direction) = self.new_direction.take() {
             let current_head = self.segments.front().unwrap();
             let new_start = (
@@ -155,8 +166,16 @@ impl State {
         *self = State::new(self.board_size.0, self.board_size.1);
     }
 
+    // TODO It sucks that this is an associated function
+    //   only because we use it before the `State` is fully constructed
+    // TODO Should these really be associated functions at all, for that matter?
+    //   They could just be free functions,
+    //   especially when this code moves to a dedicated module.
+    // TODO What type should we take here?
     fn spawn_food<'a>(
+        // TODO Actually we only need the width ...
         board_size: (usize, usize),
+        // TODO I don't like the `&bool`
         occupied: impl IntoIterator<Item = &'a bool>,
         free_cells: &mut Vec<usize>,
     ) -> (f64, f64) {
@@ -164,6 +183,7 @@ impl State {
         free_cells.extend(
             occupied.into_iter()
                 .enumerate()
+                // TODO I don't like the `&` here
                 .filter(|(_, &occupied)| !occupied)
                 .map(|(index, _)| index)
         );
@@ -173,13 +193,22 @@ impl State {
         //   remember to get rid of the `wasm-bindgen` feature
         //   in `Cargo.toml`
         // TODO Seed this?
+        // TODO Make sure that this is really never called with a full field
         State::to_position(
             *free_cells.choose(&mut thread_rng()).unwrap(),
             (board_size.0 as f64, board_size.1 as f64),
         )
     }
 
+    // TODO We only need the width ...
+    // TODO Also at this point it seems ridiculous to save the size as floats
+    // TODO That this is a member and `to_position` an associated function is madness
+    // TODO Maybe both should be members of some kind of `Board` structure?
+    // TODO Abstract coordinates, etc.
+    //   But I mean having a function like this already suggests that your positions are discrete ...
     fn to_position(index: usize, size: (f64, f64)) -> (f64, f64) {
+
+        // TODO Why is there no divmod?!
         ((index % size.0 as usize) as f64, (index / size.0 as usize) as f64)
     }
 
@@ -194,6 +223,8 @@ impl State {
 }
 
 struct Segment {
+    // TODO Create a newtype for coordinates?
+    //   That does bounds checking??!?
     start: (f64, f64),
     behind: (f64, f64),
     direction: (f64, f64),
@@ -203,6 +234,8 @@ impl Segment {
     // TODO Note that this is now potentially unsafe ...
     //   Can we add appropriate checks?
     //   Look at the assembly to see what this would cost us
+    // TODO Create situationally more appropriate versions of this?
+    //   Taking length and orientation maybe?
     fn new(start: (f64, f64), behind: (f64, f64)) -> Self {
         // TODO Note that everything might break if you compare to `0.0`,
         //   because of `-0.0`.
