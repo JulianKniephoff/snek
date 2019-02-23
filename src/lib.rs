@@ -331,8 +331,11 @@ fn fit_canvas(
         .unwrap().as_f64().unwrap() as i32;
     assert!(canvas_width > 0);
     assert!(canvas_height > 0);
-    let canvas_width = canvas_width as usize;
-    let canvas_height = canvas_height as usize;
+    let scale = window.device_pixel_ratio();
+    canvas.style().set_property("width", &(canvas_width.to_string() + "px"));
+    canvas.style().set_property("height", &(canvas_height.to_string() + "px"));
+    let canvas_width = (scale * canvas_width as f64) as usize;
+    let canvas_height = (scale * canvas_height as f64) as usize;
     canvas.set_width(canvas_width as u32);
     canvas.set_height(canvas_height as u32);
 }
