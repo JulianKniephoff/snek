@@ -541,7 +541,11 @@ fn fit_canvas(
     assert!(canvas_width > 0);
     assert!(canvas_height > 0);
     let scale = window.device_pixel_ratio();
+    // TODO Should this really be necessary?
+    // TODO We might be able to circumvent the bluriness when zoomed in
+    //   more easily using the `image-rendering` CSS property
     canvas.style().set_property("width", &(canvas_width.to_string() + "px"));
+    // TODO Actually setting the height is redundant ...
     canvas.style().set_property("height", &(canvas_height.to_string() + "px"));
     let canvas_width = (scale * canvas_width as f64) as usize;
     let canvas_height = (scale * canvas_height as f64) as usize;

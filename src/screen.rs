@@ -48,6 +48,7 @@ impl Screen {
         ) as f64;
         // TODO Make sure this is not 0?
         // TODO This assumes that the context was actually reset by a resize ...
+        // TODO Is it necessary to do this every time?
         self.front_buffer.context.set_image_smoothing_enabled(false);
         self.front_buffer.context.scale(
             scale as f64,
