@@ -10,11 +10,12 @@ mod screen;
 
 use std::{cell::RefCell, rc::Rc, collections::VecDeque};
 use rand::{thread_rng, seq::SliceRandom};
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::{prelude::*, JsCast, convert::FromWasmAbi};
 use web_sys::{
     HtmlCanvasElement,
     Window,
     KeyboardEvent,
+    FocusEvent,
 };
 use screen::{Screen};
 
@@ -235,57 +236,43 @@ fn snek() {
         main_loop.borrow().as_ref().unwrap().as_ref().unchecked_ref()
     ).unwrap();
 
-    let handler = Closure::wrap(
-        (box move |event: KeyboardEvent| {
-            let mut state = state.borrow_mut();
-            let key = event.key();
-            let new_orientation = match state.segments
-                .front().unwrap()
-                .orientation
-            {
-                Orientation::North | Orientation::South => match key.as_ref() {
-                    "ArrowLeft" => Orientation::West,
-                    "ArrowRight" => Orientation::East,
-                    _ => return,
-                },
-                Orientation::East | Orientation::West => match key.as_ref() {
-                    "ArrowUp" => Orientation::North,
-                    "ArrowDown" => Orientation::South,
-                    _ => return,
-                },
-            };
-            let current_position = state.segments.front().unwrap().start;
-            state.segments.push_front(Segment::new(
-                current_position,
-                0,
-                new_orientation,
-            ));
-        }) as Box<dyn FnMut(_)>,
-    );
-    window.add_event_listener_with_callback(
-        "keyup",
-        handler.as_ref().unchecked_ref(),
-    ).unwrap();
-    handler.forget();
+    add_event_listener(&window, "keyup", move |event: KeyboardEvent| {
+        let mut state = state.borrow_mut();
+        let key = event.key();
+        let new_orientation = match state.segments
+            .front().unwrap()
+            .orientation
+        {
+            Orientation::North | Orientation::South => match key.as_ref() {
+                "ArrowLeft" => Orientation::West,
+                "ArrowRight" => Orientation::East,
+                _ => return,
+            },
+            Orientation::East | Orientation::West => match key.as_ref() {
+                "ArrowUp" => Orientation::North,
+                "ArrowDown" => Orientation::South,
+                _ => return,
+            },
+        };
+        let current_position = state.segments.front().unwrap().start;
+        state.segments.push_front(Segment::new(
+            current_position,
+            0,
+            new_orientation,
+        ));
+    });
 
-    let handler = Closure::wrap(
-        (box move || {
-            let window = web_sys::window().unwrap();
-            fit_canvas(
-                &window,
-                window.document().unwrap()
-                    .get_elements_by_tag_name("canvas")
-                    .item(0).unwrap()
-                    .unchecked_ref(),
-            );
-            screen.resize();
-        }) as Box<dyn FnMut()>,
-    );
-    window.add_event_listener_with_callback(
-        "resize",
-        handler.as_ref().unchecked_ref(),
-    ).unwrap();
-    handler.forget();
+    add_event_listener(&window, "resize", move |_: FocusEvent| {
+        let window = web_sys::window().unwrap();
+        fit_canvas(
+            &window,
+            window.document().unwrap()
+                .get_elements_by_tag_name("canvas")
+                .item(0).unwrap()
+                .unchecked_ref(),
+        );
+        screen.resize();
+    });
 }
 
 fn render(state: &State, screen: &Screen) {
@@ -338,4 +325,17 @@ fn fit_canvas(
     let canvas_height = (scale * canvas_height as f64) as usize;
     canvas.set_width(canvas_width as u32);
     canvas.set_height(canvas_height as u32);
+}
+
+fn add_event_listener<E>(
+    window: &Window,
+    event_type: &str,
+    handler: impl FnMut(E) + 'static,
+) where E: FromWasmAbi + 'static {
+    let closure: Closure<FnMut(E)> = Closure::new(handler);
+    window.add_event_listener_with_callback(
+        event_type,
+        closure.as_ref().unchecked_ref()
+    );
+    closure.forget();
 }

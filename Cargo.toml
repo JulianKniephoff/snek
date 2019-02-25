@@ -8,7 +8,7 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = "0.2.33"
+wasm-bindgen = { version = "0.2.33", features = ["nightly"] }
 console_error_panic_hook = "0.1.5"
 
 [dependencies.rand]
@@ -32,6 +32,7 @@ features = [
     "HtmlCollection",
     "Performance",
     "KeyboardEvent",
+    "FocusEvent",
 ]
 
 [profile.release]
