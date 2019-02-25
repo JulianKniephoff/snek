@@ -76,8 +76,6 @@ impl State {
             panic!("Game Over!");
         }
 
-        self.occupy(head_start, true);
-
         if head_start == self.food {
             self.food = State::spawn_food(
                 (self.board_size.0 as usize, self.board_size.1 as usize),
@@ -98,6 +96,12 @@ impl State {
             };
             self.occupy(tail_end, false);
         }
+
+        if self.occupied[self.to_index(head_start)] {
+            panic!("Game Over!");
+        }
+
+        self.occupy(head_start, true);
     }
 
     fn spawn_food<'a>(
@@ -122,10 +126,13 @@ impl State {
         ((index % size.0 as usize) as f64, (index / size.0 as usize) as f64)
     }
 
+    fn to_index(&self, position: (f64, f64)) -> usize {
+        (position.1 * self.board_size.0 + position.0) as usize
+    }
+
     fn occupy(&mut self, position: (f64, f64), occupied: bool) {
-        self.occupied[
-            (position.1 * self.board_size.0 + position.0) as usize
-        ] = occupied;
+        let index = self.to_index(position);
+        self.occupied[index] = occupied;
     }
 }
 
