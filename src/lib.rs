@@ -212,6 +212,7 @@ impl State {
         ((index % size.0 as usize) as f64, (index / size.0 as usize) as f64)
     }
 
+    // TODO That this is a member while the above is static is madness
     fn to_index(&self, position: (f64, f64)) -> usize {
         (position.1 * self.board_size.0 + position.0) as usize
     }
