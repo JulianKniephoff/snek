@@ -425,6 +425,10 @@ fn snek() {
     });
 
     // TODO Throttle!!!
+    // TODO Can you somehow pass a function without argument?
+    //   A second function? Overlaoding using traits??!
+    // TODO Can you just pass `Event`?
+    // TODO Why does this take a `FocusEvent`??!??
     add_event_listener(&window, "resize", move |_: FocusEvent| {
         let window = web_sys::window().unwrap();
         fit_canvas(
@@ -553,15 +557,31 @@ fn fit_canvas(
     canvas.set_height(canvas_height as u32);
 }
 
+// TODO Can you somehow import this function directly with `wasm_bindgen`?
+// TODO Make this more general?
+//   Allow functions without argument?
+//   Allow return types?
+//   Factor out the actual registration code as well?
+//   Then you need to be able to take even more different closures ...
+//   Can a macro help?!
+// TODO Is `FnMut` the right bound?
+// TODO You now lose the optimization of `box`-ing the closure directly ...
 fn add_event_listener<E>(
     window: &Window,
     event_type: &str,
     handler: impl FnMut(E) + 'static,
+    // TODO Why can this `where` not be written using `impl` above?!
+    //   Maybe you want to put all bounds in the `where` then?
+    // TODO Why does `E` have to be `static`?!
+    // TODO Do we really need this bound?
 ) where E: FromWasmAbi + 'static {
+    // TODO Why do we need type annotations here?!
+    // TODO Can we use `wrap` instead? Should we?
     let closure: Closure<FnMut(E)> = Closure::new(handler);
     window.add_event_listener_with_callback(
         event_type,
         closure.as_ref().unchecked_ref()
     );
+    // TODO Unwrap?
     closure.forget();
 }
