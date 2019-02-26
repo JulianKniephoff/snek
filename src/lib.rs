@@ -147,6 +147,9 @@ impl State {
         }
 
         if self.occupied[self.to_index(head_start)] {
+            // TODO I don't like that we do this twice,
+            //   but the order requirements of this function
+            //   demands it.
             return self.game_over();
         }
 
