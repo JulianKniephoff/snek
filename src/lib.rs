@@ -24,7 +24,7 @@ struct State {
     segments: VecDeque<Segment>,
     food: (f64, f64),
     occupied: Vec<bool>,
-    free_cells: Vec<(f64, f64)>,
+    free_cells: Vec<usize>,
     had_food: bool,
 }
 
@@ -118,19 +118,19 @@ impl State {
     fn spawn_food<'a>(
         board_size: (usize, usize),
         occupied: impl IntoIterator<Item = &'a bool>,
-        free_cells: &mut Vec<(f64, f64)>,
+        free_cells: &mut Vec<usize>,
     ) -> (f64, f64) {
         free_cells.clear();
         free_cells.extend(
             occupied.into_iter()
                 .enumerate()
                 .filter(|(_, &occupied)| !occupied)
-                .map(|(index, _)| State::to_position(index, (
-                    board_size.0 as f64,
-                    board_size.1 as f64,
-                )))
+                .map(|(index, _)| index)
         );
-        *free_cells.choose(&mut thread_rng()).unwrap()
+        State::to_position(
+            *free_cells.choose(&mut thread_rng()).unwrap(),
+            (board_size.0 as f64, board_size.1 as f64),
+        )
     }
 
     fn to_position(index: usize, size: (f64, f64)) -> (f64, f64) {
