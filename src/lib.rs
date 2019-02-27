@@ -25,6 +25,7 @@ struct State {
     food: (f64, f64),
     occupied: Vec<bool>,
     free_cells: Vec<(f64, f64)>,
+    had_food: bool,
 }
 
 impl State {
@@ -56,6 +57,7 @@ impl State {
             segments,
             occupied,
             free_cells,
+            had_food: false,
         }
     }
 
@@ -76,13 +78,7 @@ impl State {
             panic!("Game Over!");
         }
 
-        if head_start == self.food {
-            self.food = State::spawn_food(
-                (self.board_size.0 as usize, self.board_size.1 as usize),
-                &self.occupied,
-                &mut self.free_cells,
-            )
-        } else {
+        if !self.had_food {
             let tail_end = {
                 let tail = self.segments.back_mut().unwrap();
                 let tail_end = tail.end;
@@ -102,6 +98,17 @@ impl State {
         }
 
         self.occupy(head_start, true);
+
+        self.had_food = false;
+
+        if head_start == self.food {
+            self.food = State::spawn_food(
+                (self.board_size.0 as usize, self.board_size.1 as usize),
+                &self.occupied,
+                &mut self.free_cells,
+            );
+            self.had_food = true;
+        }
     }
 
     fn spawn_food<'a>(
@@ -215,7 +222,7 @@ fn snek() {
         let screen = screen.clone();
         *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
 
-            const TIME_STEP: f64 = 100.0;
+            const TIME_STEP: f64 = 500.0;
 
             lag += time - previous_time;
             previous_time = time;
