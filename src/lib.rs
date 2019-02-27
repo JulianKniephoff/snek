@@ -75,7 +75,7 @@ impl State {
             || head_start.1 < 0.0
             || head_start.1 >= self.board_size.1
         {
-            panic!("Game Over!");
+            return self.game_over();
         }
 
         if !self.had_food {
@@ -94,7 +94,7 @@ impl State {
         }
 
         if self.occupied[self.to_index(head_start)] {
-            panic!("Game Over!");
+            return self.game_over();
         }
 
         self.occupy(head_start, true);
@@ -109,6 +109,10 @@ impl State {
             );
             self.had_food = true;
         }
+    }
+
+    fn game_over(&mut self) {
+        *self = State::new(self.board_size.0, self.board_size.1);
     }
 
     fn spawn_food<'a>(
