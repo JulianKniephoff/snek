@@ -36,6 +36,8 @@ struct State {
     //   The compiler shoould optimize this but I don't see how it could.
     free_cells: Vec<usize>,
     had_food: bool,
+    // TODO Should this really be in the state?
+    //   And should the input handling be in `update` for that matter?
     new_direction: Option<(f64, f64)>,
     paused: bool,
 }
@@ -93,6 +95,8 @@ impl State {
         }
     }
 
+    // TODO Getting this in the right order was a bitch
+    //   Can you simplify this using the "Elm pattern"?
     fn update(&mut self) {
         if self.paused {
             return;
@@ -132,6 +136,7 @@ impl State {
             return self.game_over();
         }
 
+        // TODO Maybe defer elongation even more?
         if self.had_food {
             self.had_food = false;
         } else {
