@@ -97,6 +97,8 @@ impl State {
 
     // TODO Getting this in the right order was a bitch
     //   Can you simplify this using the "Elm pattern"?
+    // TODO Note that this probably horribly breaks
+    //   when the Snek is only one pixel long ...
     fn update(&mut self) {
         if self.paused {
             return;
