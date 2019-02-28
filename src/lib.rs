@@ -65,25 +65,23 @@ impl State {
 
     fn update(&mut self) {
 
-        let head_start = {
-            let (head, orientation) = {
-                let head = self.segments.front_mut().unwrap();
-
-                if let Some(new_orientation) = self.new_orientation {
-                    self.new_orientation = None;
-                    let new_start = head.start;
-                    self.segments.push_front(Segment::new(
-                        new_start,
-                        0,
-                        new_orientation
-                    ));
-                    (self.segments.front_mut().unwrap(), new_orientation)
-                } else {
-                    let orientation = head.orientation;
-                    (head, orientation)
-                }
-            };
-            let direction = orientation.to_direction::<f64>();
+        let head_start = if let Some(new_orientation) = self.new_orientation {
+            self.new_orientation = None;
+            let current_head = self.segments.front().unwrap();
+            let direction = new_orientation.to_direction::<f64>();
+            let new_start = (
+                current_head.start.0 + direction.0,
+                current_head.start.1 + direction.1,
+            );
+            self.segments.push_front(Segment::new(
+                new_start,
+                0,
+                new_orientation,
+            ));
+            new_start
+        } else {
+            let head = self.segments.front_mut().unwrap();
+            let direction = head.orientation.to_direction::<f64>();
 
             head.start.0 += direction.0;
             head.start.1 += direction.1;
@@ -98,18 +96,18 @@ impl State {
             return self.game_over();
         }
 
-        if !self.had_food {
-            let tail_end = {
-                let tail = self.segments.back_mut().unwrap();
-                let tail_end = tail.end;
+        if self.had_food {
+            self.had_food = false;
+        } else {
+            let tail = self.segments.back_mut().unwrap();
+            let tail_end = tail.end;
+            if tail.start == tail.end {
+                self.segments.pop_back();
+            } else {
                 let direction = tail.orientation.to_direction::<f64>();
                 tail.end.0 += direction.0;
                 tail.end.1 += direction.1;
-                if tail.start == tail.end {
-                    self.segments.pop_back();
-                }
-                tail_end
-            };
+            }
             self.occupy(tail_end, false);
         }
 
@@ -118,8 +116,6 @@ impl State {
         }
 
         self.occupy(head_start, true);
-
-        self.had_food = false;
 
         if head_start == self.food {
             self.food = State::spawn_food(
