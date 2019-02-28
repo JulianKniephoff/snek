@@ -26,6 +26,7 @@ struct State {
     occupied: Vec<bool>,
     free_cells: Vec<usize>,
     had_food: bool,
+    new_orientation: Option<Orientation>,
 }
 
 impl State {
@@ -58,13 +59,32 @@ impl State {
             occupied,
             free_cells,
             had_food: false,
+            new_orientation: None,
         }
     }
 
     fn update(&mut self) {
+
         let head_start = {
-            let head = self.segments.front_mut().unwrap();
-            let direction = head.orientation.to_direction::<f64>();
+            let (head, orientation) = {
+                let head = self.segments.front_mut().unwrap();
+
+                if let Some(new_orientation) = self.new_orientation {
+                    self.new_orientation = None;
+                    let new_start = head.start;
+                    self.segments.push_front(Segment::new(
+                        new_start,
+                        0,
+                        new_orientation
+                    ));
+                    (self.segments.front_mut().unwrap(), new_orientation)
+                } else {
+                    let orientation = head.orientation;
+                    (head, orientation)
+                }
+            };
+            let direction = orientation.to_direction::<f64>();
+
             head.start.0 += direction.0;
             head.start.1 += direction.1;
             head.start
@@ -167,6 +187,7 @@ impl Segment {
     }
 }
 
+#[derive(Clone, Copy)]
 enum Orientation {
     North,
     East,
@@ -256,8 +277,11 @@ fn snek() {
 
     add_event_listener(&window, "keyup", move |event: KeyboardEvent| {
         let mut state = state.borrow_mut();
+        if state.new_orientation.is_some() {
+            return;
+        }
         let key = event.key();
-        let new_orientation = match state.segments
+        state.new_orientation = Some(match state.segments
             .front().unwrap()
             .orientation
         {
@@ -271,13 +295,7 @@ fn snek() {
                 "ArrowDown" => Orientation::South,
                 _ => return,
             },
-        };
-        let current_position = state.segments.front().unwrap().start;
-        state.segments.push_front(Segment::new(
-            current_position,
-            0,
-            new_orientation,
-        ));
+        });
     });
 
     add_event_listener(&window, "resize", move |_: FocusEvent| {
