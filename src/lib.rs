@@ -55,6 +55,7 @@ impl State {
                 &occupied,
                 &mut free_cells,
             ),
+            // TODO Is there no `vec!`-like macro for this?
             segments: {
                 let mut segments = VecDeque::new();
                 segments.push_back(Segment::new(
