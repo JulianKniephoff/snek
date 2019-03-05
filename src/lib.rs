@@ -242,10 +242,10 @@ fn snek() {
     let mut lag = 0.0;
 
     let main_loop = Rc::new(RefCell::new(None));
-    let main_loop_cont = main_loop.clone();
+    let main_loop_cont = Rc::clone(&main_loop);
     {
-        let state = state.clone();
-        let screen = screen.clone();
+        let state = Rc::clone(&state);
+        let screen = Rc::clone(&screen);
         *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
 
             const TIME_STEP: f64 = 500.0;
