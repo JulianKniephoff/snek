@@ -59,6 +59,7 @@ impl State {
                 let mut segments = VecDeque::new();
                 segments.push_back(Segment::new(
                     starting_position,
+                    // TODO Because of this, our coordinates can now no longer be unsigned ...
                     (-1.0, 0.0),
                 ));
                 segments
@@ -89,8 +90,13 @@ impl State {
             new_start
         } else {
             let head = self.segments.front_mut().unwrap();
-            head.start.0 += head.direction.0;
-            head.start.1 += head.direction.1;
+            // TODO Declarations like these are now unnecessary
+            let direction = head.direction;
+
+            // TODO I don't like how we have similar calculations like these
+            //   in both branches.
+            head.start.0 += direction.0;
+            head.start.1 += direction.1;
             head.start
         };
 
@@ -175,11 +181,18 @@ struct Segment {
 }
 
 impl Segment {
+    // TODO Note that this is now potentially unsafe ...
+    //   Can we add appropriate checks?
+    //   Look at the assembly to see what this would cost us
     fn new(start: (f64, f64), behind: (f64, f64)) -> Self {
+        // TODO Note that everything might break if you compare to `0.0`,
+        //   because of `-0.0`.
+        //   This happens in multiple places in the code!!!
         Segment {
             start,
             behind,
             direction: (
+                // TODO Oh my god, make these things integers already
                 ((start.0 - behind.0) as isize).signum() as f64,
                 ((start.1 - behind.1) as isize).signum() as f64,
             )
@@ -272,6 +285,9 @@ fn snek() {
         if state.new_direction.is_some() {
             return;
         }
+
+        // TODO This is now less readable,
+        //   without `Orientation`
         let direction = state.segments
             .front().unwrap()
             .direction;
