@@ -40,13 +40,7 @@ impl State {
         assert!(board_height >= 0.0);
         const starting_length: usize = 5;
         assert!(board_width > starting_length as f64);
-        let mut segments = VecDeque::new();
         let starting_position = ((starting_length - 1) as f64, 0.0);
-        segments.push_back(Segment::new(
-            starting_position,
-            starting_length,
-            Orientation::East
-        ));
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
         for x in 0..starting_length {
@@ -60,7 +54,15 @@ impl State {
                 &occupied,
                 &mut free_cells,
             ),
-            segments,
+            segments: {
+                let mut segments = VecDeque::new();
+                segments.push_back(Segment::new(
+                    starting_position,
+                    starting_length,
+                    Orientation::East
+                ));
+                segments
+            },
             occupied,
             free_cells,
             had_food: false,
