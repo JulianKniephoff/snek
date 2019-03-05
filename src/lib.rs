@@ -31,7 +31,7 @@ struct State {
     occupied: Vec<bool>,
     free_cells: Vec<usize>,
     had_food: bool,
-    new_orientation: Option<Orientation>,
+    new_direction: Option<(f64, f64)>,
 }
 
 impl State {
@@ -58,40 +58,35 @@ impl State {
                 let mut segments = VecDeque::new();
                 segments.push_back(Segment::new(
                     starting_position,
-                    starting_length,
-                    Orientation::East
+                    (-1.0, 0.0),
                 ));
                 segments
             },
             occupied,
             free_cells,
             had_food: false,
-            new_orientation: None,
+            new_direction: None,
         }
     }
 
     fn update(&mut self) {
 
-        let head_start = if let Some(new_orientation) = self.new_orientation {
-            self.new_orientation = None;
+        let head_start = if let Some(new_direction) = self.new_direction {
+            self.new_direction = None;
             let current_head = self.segments.front().unwrap();
-            let direction = new_orientation.to_direction::<f64>();
             let new_start = (
-                current_head.start.0 + direction.0,
-                current_head.start.1 + direction.1,
+                current_head.start.0 + new_direction.0,
+                current_head.start.1 + new_direction.1,
             );
             self.segments.push_front(Segment::new(
                 new_start,
-                0,
-                new_orientation,
+                current_head.start,
             ));
             new_start
         } else {
             let head = self.segments.front_mut().unwrap();
-            let direction = head.orientation.to_direction::<f64>();
-
-            head.start.0 += direction.0;
-            head.start.1 += direction.1;
+            head.start.0 += head.direction.0;
+            head.start.1 += head.direction.1;
             head.start
         };
 
@@ -107,15 +102,14 @@ impl State {
             self.had_food = false;
         } else {
             let tail = self.segments.back_mut().unwrap();
-            let tail_end = tail.end;
-            if tail.start == tail.end {
+            tail.behind.0 += tail.direction.0;
+            tail.behind.1 += tail.direction.1;
+            let tail_start = tail.start;
+            let tail_behind = tail.behind;
+            self.occupy(tail_behind, false);
+            if tail_start == tail_behind {
                 self.segments.pop_back();
-            } else {
-                let direction = tail.orientation.to_direction::<f64>();
-                tail.end.0 += direction.0;
-                tail.end.1 += direction.1;
             }
-            self.occupy(tail_end, false);
         }
 
         if self.occupied[self.to_index(head_start)] {
@@ -171,40 +165,20 @@ impl State {
 }
 
 struct Segment {
-    orientation: Orientation,
     start: (f64, f64),
-    end: (f64, f64),
+    behind: (f64, f64),
+    direction: (f64, f64),
 }
 
 impl Segment {
-    fn new(start: (f64, f64), length: usize, orientation: Orientation) -> Self {
-        let direction = orientation.to_direction::<f64>();
+    fn new(start: (f64, f64), behind: (f64, f64)) -> Self {
         Segment {
-            orientation,
             start,
-            end: (
-                start.0 - direction.0 * length as f64,
-                start.1 - direction.1 * length as f64,
-            ),
-        }
-    }
-}
-
-#[derive(Clone, Copy)]
-enum Orientation {
-    North,
-    East,
-    South,
-    West,
-}
-
-impl Orientation {
-    fn to_direction<T: From<i8>>(&self) -> (T, T) {
-        match self {
-            Orientation::North => (T::from(0), T::from(-1)),
-            Orientation::East => (T::from(1), T::from(0)),
-            Orientation::South => (T::from(0), T::from(1)),
-            Orientation::West => (T::from(-1), T::from(0)),
+            behind,
+            direction: (
+                ((start.0 - behind.0) as isize).signum() as f64,
+                ((start.1 - behind.1) as isize).signum() as f64,
+            )
         }
     }
 }
@@ -280,24 +254,29 @@ fn snek() {
 
     add_event_listener(&window, "keyup", move |event: KeyboardEvent| {
         let mut state = state.borrow_mut();
-        if state.new_orientation.is_some() {
+        if state.new_direction.is_some() {
             return;
         }
         let key = event.key();
-        state.new_orientation = Some(match state.segments
+        let direction = state.segments
             .front().unwrap()
-            .orientation
-        {
-            Orientation::North | Orientation::South => match key.as_ref() {
-                "ArrowLeft" => Orientation::West,
-                "ArrowRight" => Orientation::East,
+            .direction;
+        state.new_direction = Some(if direction.0 == 0.0 {
+            // We are currently moving vertically
+            match key.as_ref() {
+                "ArrowLeft" => (-1.0, 0.0),
+                "ArrowRight" => (1.0, 0.0),
                 _ => return,
-            },
-            Orientation::East | Orientation::West => match key.as_ref() {
-                "ArrowUp" => Orientation::North,
-                "ArrowDown" => Orientation::South,
+            }
+        } else if direction.1 == 0.0 {
+            // We are currently moving horizontally
+            match key.as_ref() {
+                "ArrowUp" => (0.0, -1.0),
+                "ArrowDown" => (0.0, 1.0),
                 _ => return,
-            },
+            }
+        } else {
+            return
         });
     });
 
@@ -326,7 +305,10 @@ fn render(state: &State, screen: &Screen) {
         context.save();
         context.set_stroke_style(&["green", "red"][i % 2].into());
         context.move_to(segment.start.0, segment.start.1);
-        context.line_to(segment.end.0, segment.end.1);
+        context.line_to(
+            segment.behind.0 + segment.direction.0,
+            segment.behind.1 + segment.direction.1,
+        );
         context.stroke();
         context.restore();
     }
