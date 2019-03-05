@@ -10,7 +10,12 @@ mod screen;
 
 use std::{cell::RefCell, rc::Rc, collections::VecDeque};
 use rand::{thread_rng, seq::SliceRandom};
-use wasm_bindgen::{prelude::*, JsCast, convert::FromWasmAbi};
+use wasm_bindgen::{
+    prelude::wasm_bindgen,
+    JsCast,
+    closure::Closure,
+    convert::FromWasmAbi,
+};
 use web_sys::{
     HtmlCanvasElement,
     Window,
