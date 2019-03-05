@@ -71,8 +71,7 @@ impl State {
 
     fn update(&mut self) {
 
-        let head_start = if let Some(new_direction) = self.new_direction {
-            self.new_direction = None;
+        let head_start = if let Some(new_direction) = self.new_direction.take() {
             let current_head = self.segments.front().unwrap();
             let new_start = (
                 current_head.start.0 + new_direction.0,
