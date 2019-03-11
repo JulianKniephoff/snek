@@ -32,6 +32,7 @@ struct State {
     free_cells: Vec<usize>,
     had_food: bool,
     new_direction: Option<(f64, f64)>,
+    paused: bool,
 }
 
 impl State {
@@ -66,10 +67,14 @@ impl State {
             free_cells,
             had_food: false,
             new_direction: None,
+            paused: false,
         }
     }
 
     fn update(&mut self) {
+        if self.paused {
+            return;
+        }
 
         let head_start = if let Some(new_direction) = self.new_direction.take() {
             let current_head = self.segments.front().unwrap();
@@ -253,10 +258,16 @@ fn snek() {
 
     add_event_listener(&window, "keyup", move |event: KeyboardEvent| {
         let mut state = state.borrow_mut();
+        let key = event.key();
+
+        if key == " " {
+            state.paused = !state.paused;
+            return;
+        }
+
         if state.new_direction.is_some() {
             return;
         }
-        let key = event.key();
         let direction = state.segments
             .front().unwrap()
             .direction;
