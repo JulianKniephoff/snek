@@ -265,6 +265,10 @@ fn snek() {
             return;
         }
 
+        if state.paused {
+            return;
+        }
+
         if state.new_direction.is_some() {
             return;
         }
