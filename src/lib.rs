@@ -19,6 +19,7 @@ use wasm_bindgen::{
 use web_sys::{
     HtmlCanvasElement,
     Window,
+    EventTarget,
     KeyboardEvent,
     FocusEvent,
 };
@@ -367,12 +368,12 @@ fn fit_canvas(
 }
 
 fn add_event_listener<E>(
-    window: &Window,
+    target: &EventTarget,
     event_type: &str,
     handler: impl FnMut(E) + 'static,
 ) where E: FromWasmAbi + 'static {
     let closure: Closure<FnMut(E)> = Closure::new(handler);
-    window.add_event_listener_with_callback(
+    target.add_event_listener_with_callback(
         event_type,
         closure.as_ref().unchecked_ref()
     );
