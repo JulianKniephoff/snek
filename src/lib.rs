@@ -319,10 +319,9 @@ fn render(state: &State, screen: &Screen) {
     context.save();
     context.translate(0.5, 0.5);
     context.set_line_cap("square");
-    for (i, segment) in state.segments.iter().enumerate() {
+    for segment in &state.segments {
         context.begin_path();
         context.save();
-        context.set_stroke_style(&["green", "red"][i % 2].into());
         context.move_to(segment.start.0, segment.start.1);
         context.line_to(
             segment.behind.0 + segment.direction.0,
