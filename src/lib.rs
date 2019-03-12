@@ -458,6 +458,7 @@ fn snek() {
 // TODO This should be factored differently
 fn render(state: &State, screen: &Screen) {
     if state.paused {
+        // TODO Should flipping be taken care of by some kind of container?
         screen.flip();
         return;
     }
