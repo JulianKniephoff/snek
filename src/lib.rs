@@ -308,6 +308,11 @@ fn snek() {
 }
 
 fn render(state: &State, screen: &Screen) {
+    if state.paused {
+        screen.flip();
+        return;
+    }
+
     let context = screen.context();
     context.save();
     context.translate(1.0, 1.0);
