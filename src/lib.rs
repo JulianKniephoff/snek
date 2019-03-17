@@ -1,11 +1,6 @@
 #![feature(box_syntax)]
 #![feature(try_from)]
 
-extern crate rand;
-extern crate wasm_bindgen;
-extern crate web_sys;
-extern crate console_error_panic_hook;
-
 mod screen;
 
 use std::{cell::RefCell, rc::Rc, collections::VecDeque};
