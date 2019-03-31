@@ -188,6 +188,8 @@ pub fn main() {
     snek();
 }
 
+const PIXELS_PER_TILE: usize = 2;
+
 fn snek() {
     console_error_panic_hook::set_once();
 
@@ -209,8 +211,8 @@ fn snek() {
     body.append_child(&canvas).unwrap();
     fit_canvas(&window, &canvas);
 
-    const FRAME_WIDTH: usize = BOARD_WIDTH as usize + 2;
-    const FRAME_HEIGHT: usize = BOARD_HEIGHT as usize + 2;
+    const FRAME_WIDTH: usize = PIXELS_PER_TILE * (BOARD_WIDTH as usize + 2);
+    const FRAME_HEIGHT: usize = PIXELS_PER_TILE * (BOARD_HEIGHT as usize + 2);
 
     let screen = Rc::new(Screen::new(canvas, FRAME_WIDTH, FRAME_HEIGHT));
 
@@ -310,6 +312,10 @@ fn render(state: &State, screen: &Screen) {
     }
 
     let context = screen.context();
+
+    context.save();
+    context.scale(PIXELS_PER_TILE as f64, PIXELS_PER_TILE as f64);
+
     context.save();
     context.translate(1.0, 1.0);
     context.save();
@@ -338,6 +344,8 @@ fn render(state: &State, screen: &Screen) {
         state.board_size.0 + 1.0,
         state.board_size.1 + 1.0,
     );
+    context.restore();
+
     context.restore();
 
     screen.flip();
