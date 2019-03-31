@@ -18,7 +18,7 @@ use web_sys::{
     KeyboardEvent,
     FocusEvent,
 };
-use screen::{Screen};
+use screen::Screen;
 
 struct State {
     board_size: (f64, f64),
