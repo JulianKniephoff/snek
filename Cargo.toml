@@ -10,6 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 wasm-bindgen = { version = "0.2.33", features = ["nightly"] }
 console_error_panic_hook = "0.1.5"
+base64 = "0.10.1"
 
 [dependencies.rand]
 version = "0.6"
