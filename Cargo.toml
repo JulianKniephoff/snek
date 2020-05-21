@@ -35,6 +35,3 @@ features = [
     "KeyboardEvent",
     "FocusEvent",
 ]
-
-[profile.release]
-debug = true
