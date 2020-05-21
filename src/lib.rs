@@ -34,12 +34,12 @@ impl State {
     fn new(board_width: f64, board_height: f64) -> Self {
         assert!(board_width >= 0.0);
         assert!(board_height >= 0.0);
-        const starting_length: usize = 5;
-        assert!(board_width > starting_length as f64);
-        let starting_position = ((starting_length - 1) as f64, 0.0);
+        const STARTING_LENGTH: usize = 5;
+        assert!(board_width > STARTING_LENGTH as f64);
+        let starting_position = ((STARTING_LENGTH - 1) as f64, 0.0);
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
-        for x in 0..starting_length {
+        for x in 0..STARTING_LENGTH {
             occupied[x] = true;
         }
         let mut free_cells = Vec::with_capacity(cell_count);
