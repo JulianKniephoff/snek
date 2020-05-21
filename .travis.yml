@@ -6,7 +6,7 @@ install:
   - source $HOME/.cargo/env
   - npm install
 
-script: npx webpack
+script: npm run build
 
 deploy:
   provider: pages
