@@ -374,7 +374,7 @@ fn add_event_listener<E>(
     event_type: &str,
     handler: impl FnMut(E) + 'static,
 ) where E: FromWasmAbi + 'static {
-    let closure: Closure<dyn FnMut(E)> = Closure::wrap(Box::new(handler));
+    let closure: Closure<dyn FnMut(E)> = Closure::new(handler);
     target.add_event_listener_with_callback(
         event_type,
         closure.as_ref().unchecked_ref()
