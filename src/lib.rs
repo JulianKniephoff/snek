@@ -1,5 +1,4 @@
 #![feature(box_syntax)]
-#![feature(try_from)]
 
 mod screen;
 
@@ -35,12 +34,12 @@ impl State {
     fn new(board_width: f64, board_height: f64) -> Self {
         assert!(board_width >= 0.0);
         assert!(board_height >= 0.0);
-        const starting_length: usize = 5;
-        assert!(board_width > starting_length as f64);
-        let starting_position = ((starting_length - 1) as f64, 0.0);
+        const STARTING_LENGTH: usize = 5;
+        assert!(board_width > STARTING_LENGTH as f64);
+        let starting_position = ((STARTING_LENGTH - 1) as f64, 0.0);
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
-        for x in 0..starting_length {
+        for x in 0..STARTING_LENGTH {
             occupied[x] = true;
         }
         let mut free_cells = Vec::with_capacity(cell_count);
@@ -73,7 +72,7 @@ impl State {
         }
 
         let head_start = if let Some(new_direction) = self.new_direction.take() {
-            let current_head = self.segments.front().unwrap();
+            let current_head = *self.segments.front().unwrap();
             let new_start = (
                 current_head.start.0 + new_direction.0,
                 current_head.start.1 + new_direction.1,
@@ -164,6 +163,7 @@ impl State {
     }
 }
 
+#[derive(Clone, Copy)]
 struct Segment {
     start: (f64, f64),
     behind: (f64, f64),
@@ -375,7 +375,7 @@ fn add_event_listener<E>(
     event_type: &str,
     handler: impl FnMut(E) + 'static,
 ) where E: FromWasmAbi + 'static {
-    let closure: Closure<FnMut(E)> = Closure::new(handler);
+    let closure: Closure<dyn FnMut(E)> = Closure::wrap(Box::new(handler));
     target.add_event_listener_with_callback(
         event_type,
         closure.as_ref().unchecked_ref()
