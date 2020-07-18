@@ -72,14 +72,14 @@ impl State {
         }
 
         let head_start = if let Some(new_direction) = self.new_direction.take() {
-            let current_head = *self.segments.front().unwrap();
+            let current_head_start = self.segments.front().unwrap().start;
             let new_start = (
-                current_head.start.0 + new_direction.0,
-                current_head.start.1 + new_direction.1,
+                current_head_start.0 + new_direction.0,
+                current_head_start.1 + new_direction.1,
             );
             self.segments.push_front(Segment::new(
                 new_start,
-                current_head.start,
+                current_head_start,
             ));
             new_start
         } else {
@@ -163,7 +163,6 @@ impl State {
     }
 }
 
-#[derive(Clone, Copy)]
 struct Segment {
     start: (f64, f64),
     behind: (f64, f64),
