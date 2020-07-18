@@ -36,7 +36,7 @@ impl State {
         assert!(board_height >= 0.0);
         const STARTING_LENGTH: usize = 5;
         assert!(board_width > STARTING_LENGTH as f64);
-        let starting_position = ((STARTING_LENGTH - 1) as f64, 0.0);
+        const STARTING_POSITION: (f64, f64) = ((STARTING_LENGTH - 1) as f64, 0.0);
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
         for x in 0..STARTING_LENGTH {
@@ -53,7 +53,7 @@ impl State {
             segments: {
                 let mut segments = VecDeque::new();
                 segments.push_back(Segment::new(
-                    starting_position,
+                    STARTING_POSITION,
                     (-1.0, 0.0),
                 ));
                 segments
