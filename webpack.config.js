@@ -10,5 +10,4 @@ module.exports = {
             title: 'This is Snek!',
         }),
     ],
-    mode: 'development',
 };
