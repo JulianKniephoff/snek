@@ -34,7 +34,7 @@ Unfortunately, I can't give you exact version requirements for these,
 since the build is currently only tested on my machine.
 Just make sure your Node.js setup is reasonably modern,
 and for Rust, you are probably going to need the nightly toolchian,
-as I currently to not flinch from using unstable features. :wink:
+as I currently do not flinch from using unstable features. :wink:
 
 If you have `rustup` installed,
 which is the recommended way to install Rust,
