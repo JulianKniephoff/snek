@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "webpack-dev-server --mode development",
-    "build": "webpack"
+    "build": "webpack --mode production"
   },
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "^0.2.7",
