@@ -39,7 +39,7 @@ impl Screen {
         self.front_buffer.context.scale(
             scale as f64,
             scale as f64,
-        );
+        ).unwrap();
     }
 
     pub fn flip(&self) {

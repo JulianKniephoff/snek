@@ -313,12 +313,12 @@ fn render(state: &State, screen: &Screen) {
     let context = screen.context();
 
     context.save();
-    context.scale(PIXELS_PER_TILE as f64, PIXELS_PER_TILE as f64);
+    context.scale(PIXELS_PER_TILE as f64, PIXELS_PER_TILE as f64).unwrap();
 
     context.save();
-    context.translate(1.0, 1.0);
+    context.translate(1.0, 1.0).unwrap();
     context.save();
-    context.translate(0.5, 0.5);
+    context.translate(0.5, 0.5).unwrap();
     context.set_line_cap("square");
     for segment in &state.segments {
         context.begin_path();
@@ -337,7 +337,7 @@ fn render(state: &State, screen: &Screen) {
     context.restore();
 
     context.save();
-    context.translate(0.5, 0.5);
+    context.translate(0.5, 0.5).unwrap();
     context.stroke_rect(
         0.0, 0.0,
         state.board_size.0 + 1.0,
@@ -361,8 +361,8 @@ fn fit_canvas(
     assert!(canvas_width > 0);
     assert!(canvas_height > 0);
     let scale = window.device_pixel_ratio();
-    canvas.style().set_property("width", &(canvas_width.to_string() + "px"));
-    canvas.style().set_property("height", &(canvas_height.to_string() + "px"));
+    canvas.style().set_property("width", &(canvas_width.to_string() + "px")).unwrap();
+    canvas.style().set_property("height", &(canvas_height.to_string() + "px")).unwrap();
     let canvas_width = (scale * canvas_width as f64) as usize;
     let canvas_height = (scale * canvas_height as f64) as usize;
     canvas.set_width(canvas_width as u32);
@@ -378,6 +378,6 @@ fn add_event_listener<E>(
     target.add_event_listener_with_callback(
         event_type,
         closure.as_ref().unchecked_ref()
-    );
+    ).unwrap();
     closure.forget();
 }
