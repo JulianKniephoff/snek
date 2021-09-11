@@ -11,4 +11,7 @@ module.exports = {
             title: 'This is Snek!',
         }),
     ],
+    experiments: {
+        asyncWebAssembly: true,
+    },
 };

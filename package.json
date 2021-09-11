@@ -6,7 +6,7 @@
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "^0.2.7",
     "html-webpack-plugin": "^4.5.2",
-    "webpack": "^4.46.0",
+    "webpack": "^5.52.1",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.2.0"
   }
