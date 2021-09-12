@@ -57,7 +57,7 @@ Finally, you can run
 
     npm start
 
-which starts a local development server
-on [`http://localhost:8080`](http://localhost:8080),
+which starts a local development server,
+usually on [`http://localhost:8080`](http://localhost:8080),
 which will automatically rebuild the project
 on any change to its source files.
