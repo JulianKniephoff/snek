@@ -5,7 +5,7 @@ module.exports = {
     mode: 'none',
     plugins: [
         new WasmPackPlugin({
-            crateDirectory: '.',
+            crateDirectory: __dirname,
         }),
         new HtmlWebpackPlugin({
             title: 'This is Snek!',
