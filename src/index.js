@@ -1,1 +1,1 @@
-import('../pkg/snek');
+import('../pkg');
