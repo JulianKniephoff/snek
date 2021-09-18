@@ -1,0 +1,32 @@
+name: Deploy Snek!
+on: [push]
+jobs:
+  deploy:
+    name: Deploy Snek!
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+      - name: Set up a Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          cache: npm
+          node-version: 16
+      - name: Install Node.js dependencies
+        run: npm install
+      - name: Set up a Rust environment
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: wasm32-unknown-unknown
+          profile: minimal
+          override: true
+      # Note that we don't cache the Rust side of things,
+      # because we use a nightly toolchain anyway.
+      - name: Build
+        run: npm run build
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: dist

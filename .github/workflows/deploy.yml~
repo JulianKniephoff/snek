@@ -1,0 +1,5 @@
+name: Deploy Snek!
+on: [push]
+jobs:
+  deploy:
+    name: Deploy Snek!
