@@ -1,4 +1,5 @@
-#![feature(box_syntax)]
+#![feature(stmt_expr_attributes)]
+#![feature(rustc_attrs)]
 
 mod screen;
 
@@ -223,7 +224,7 @@ fn snek() {
     {
         let state = Rc::clone(&state);
         let screen = Rc::clone(&screen);
-        *main_loop.borrow_mut() = Some(Closure::wrap((box move |time: f64| {
+        *main_loop.borrow_mut() = Some(Closure::wrap(#[rustc_box] Box::new(move |time: f64| {
 
             const TIME_STEP: f64 = 500.0;
 
