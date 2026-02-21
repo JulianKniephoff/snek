@@ -2,7 +2,7 @@ name: Deploy Snek!
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   deploy:
     name: Deploy Snek!
