@@ -17,15 +17,6 @@ jobs:
           node-version: 22
       - name: Install Node.js dependencies
         run: npm ci
-      - name: Set up a Rust environment
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          target: wasm32-unknown-unknown
-          profile: minimal
-          override: true
-      # Note that we don't cache the Rust side of things,
-      # because we use a nightly toolchain anyway.
       - name: Build
         run: npm run build
       - name: Deploy
