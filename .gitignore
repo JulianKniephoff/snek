@@ -1,6 +1,4 @@
 # Build artifacts
 /target
 /dist
-/pkg
-/node_modules
 /wasm-pack.log
