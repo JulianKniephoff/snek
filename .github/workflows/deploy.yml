@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Set up a Node.js environment
         uses: actions/setup-node@v6
         with:
