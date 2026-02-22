@@ -16,7 +16,7 @@ jobs:
           cache: npm
           node-version: 22
       - name: Install Node.js dependencies
-        run: npm install
+        run: npm ci
       - name: Set up a Rust environment
         uses: actions-rs/toolchain@v1
         with:
