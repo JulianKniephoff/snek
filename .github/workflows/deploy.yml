@@ -11,7 +11,7 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v2
       - name: Set up a Node.js environment
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           cache: npm
           node-version: 22
