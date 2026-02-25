@@ -1,7 +1,7 @@
 mod screen;
 
 use std::{cell::RefCell, rc::Rc, collections::VecDeque};
-use rand::{thread_rng, seq::SliceRandom};
+use rand::{rng, seq::IndexedRandom};
 use wasm_bindgen::{
     prelude::wasm_bindgen,
     JsCast,
@@ -142,7 +142,7 @@ impl State {
                 .map(|(index, _)| index)
         );
         State::to_position(
-            *free_cells.choose(&mut thread_rng()).unwrap(),
+            *free_cells.choose(&mut rng()).unwrap(),
             (board_size.0 as f64, board_size.1 as f64),
         )
     }
