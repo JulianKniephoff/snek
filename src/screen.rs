@@ -31,14 +31,14 @@ impl Screen {
     }
 
     pub fn resize(&self) {
-        let scale: f64 = min(
+        let scale = min(
             self.front_buffer.canvas.width() as usize / self.resolution.0,
             self.front_buffer.canvas.height() as usize / self.resolution.1,
         ) as f64;
         self.front_buffer.context.set_image_smoothing_enabled(false);
         self.front_buffer.context.scale(
-            scale as f64,
-            scale as f64,
+            scale,
+            scale,
         ).unwrap();
     }
 
@@ -66,8 +66,8 @@ impl<Canvas: Draw2d> ScreenBuffer<Canvas> {
     fn new(canvas: Canvas) -> Self {
         let context = canvas.get_context_2d();
         ScreenBuffer {
-            canvas: canvas,
-            context: context,
+            canvas,
+            context,
         }
     }
 }

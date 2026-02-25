@@ -37,8 +37,8 @@ impl State {
         const STARTING_POSITION: (f64, f64) = ((STARTING_LENGTH - 1) as f64, 0.0);
         let cell_count = board_width as usize * board_height as usize;
         let mut occupied = vec![false; cell_count];
-        for x in 0..STARTING_LENGTH {
-            occupied[x] = true;
+        for cell in occupied.iter_mut().take(STARTING_LENGTH) {
+            *cell = true;
         }
         let mut free_cells = Vec::with_capacity(cell_count);
         State {

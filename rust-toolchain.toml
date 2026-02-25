@@ -1,3 +1,4 @@
 [toolchain]
 channel = "nightly"
+components = ["clippy"]
 targets = ["wasm32-unknown-unknown"]

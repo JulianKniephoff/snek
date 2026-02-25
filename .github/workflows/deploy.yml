@@ -27,7 +27,7 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Build
-        run: make build RELEASE=1
+        run: make RELEASE=1
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:

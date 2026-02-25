@@ -54,6 +54,10 @@ which runs `wasm-pack`
 and starts a local development server,
 on [`http://localhost:8000`](http://localhost:8000).
 
+To run lint checks, use
+
+  make lint
+
 If you change Rust source files,
 stop and rerun `make start`.
 
