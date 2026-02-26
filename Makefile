@@ -20,3 +20,4 @@ start: build
 
 clean:
 	rm -rf dist
+	cargo clean
