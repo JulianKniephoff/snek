@@ -12,7 +12,8 @@ lint:
 
 build: lint
 	mkdir -p dist
-	wasm-pack build --target web --out-dir dist/pkg $(WASM_RELEASE_FLAG)
+	wasm-pack build --target web --out-dir dist/pkg --no-pack --no-typescript $(WASM_RELEASE_FLAG)
+	rm -f dist/pkg/.gitignore
 	cp src/index.html dist/index.html
 
 start: build
