@@ -138,7 +138,7 @@ impl State {
         free_cells.extend(
             occupied.into_iter()
                 .enumerate()
-                .filter(|(_, &occupied)| !occupied)
+                .filter(|&(_, &occupied)| !occupied)
                 .map(|(index, _)| index)
         );
         State::to_position(

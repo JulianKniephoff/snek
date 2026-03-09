@@ -1,4 +1,4 @@
-use std::{cmp::min, convert::TryInto};
+use std::cmp::min;
 use wasm_bindgen::JsCast;
 use web_sys::{
     HtmlCanvasElement,
