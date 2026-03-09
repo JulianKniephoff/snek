@@ -3,6 +3,7 @@ name = "snek"
 version = "0.1.0"
 authors = ["Julian Kniephoff <me@juliankniephoff.com>"]
 edition = "2024"
+rust-version = "1.85"
 
 [lib]
 crate-type = ["cdylib"]

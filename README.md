@@ -25,14 +25,13 @@ Running it
 If you want to play around with this on your machine,
 you will need the following things:
 
-- An installation of the Rust programming language,
-  including Cargo
+- Rust 1.85.0 or newer, including Cargo
 - `wasm-pack` available in your PATH
 - `make`
 - Python 3 (for a simple local server)
 
-Unfortunately, I can't give you exact version requirements for these,
-since the build is currently only tested on my machine.
+The exact minimum version requirements for tools other than Rust
+are currently not pinned.
 
 If you have `rustup` installed,
 which is the recommended way to install Rust,
