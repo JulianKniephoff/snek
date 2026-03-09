@@ -33,17 +33,10 @@ you will need the following things:
 
 Unfortunately, I can't give you exact version requirements for these,
 since the build is currently only tested on my machine.
-Be adviced, though, that I currently do not flinch
-from using unstable features. 😉
 
 If you have `rustup` installed,
 which is the recommended way to install Rust,
-you can just say
-
-    rustup override set nightly
-
-and the build process we are about to start
-should do the right thing.
+the checked-in toolchain configuration will use stable automatically.
 
 With all this out of the way,
 you should be able to run
