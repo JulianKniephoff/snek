@@ -40,7 +40,7 @@ the checked-in toolchain configuration will use stable automatically.
 With all this out of the way,
 you should be able to run
 
-  make start
+    make start
 
 which runs `wasm-pack`
 and starts a local development server,
@@ -48,7 +48,7 @@ on [`http://localhost:8000`](http://localhost:8000).
 
 To run lint checks, use
 
-  make lint
+    make lint
 
 If you change Rust source files,
 stop and rerun `make start`.
